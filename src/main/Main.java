@@ -12,10 +12,17 @@ public class Main {
 	      final String user = "root";
 	      final String password = "lorenzo97";
 
+	      CryptoAdapter ca = CryptoAdapter.build()
+	    		  .url(url)
+	    		  .username(user)
+	    		  .password(password);
 	      // establish the connection
 	      try {
-			Connection con = DriverManager.getConnection(url, user, password);
+			  ca.connect();
+	    	  ca.executeQuery("create table prova(a int)");
 		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} catch(RuntimeException e) {
 			System.out.println(e.getMessage());
 		}
 
