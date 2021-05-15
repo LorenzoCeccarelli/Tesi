@@ -2,9 +2,12 @@ package ClientsideEncryption;
 
 import ClientsideEncryption.exceptions.ConnectionParameterNotValid;
 import ClientsideEncryption.exceptions.InvalidQueryException;
+import ClientsideEncryption.keystore.KeyStoreInfo;
+import ClientsideEncryption.keystore.KeystoreManager;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.lang.annotation.Documented;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -14,10 +17,13 @@ public class CryptoAdapter {
 
 	private DatabaseManager dbManager;
 	private KeystoreManager ksManager;
+	private EncryptionManager encManager;
+	private KeyStoreInfo ksi;
 
 	private CryptoAdapter() {
 		dbManager = new DatabaseManager();
 		ksManager = new KeystoreManager();
+		encManager = new EncryptionManager();
 	}
 	
 	public static CryptoAdapter newBuilder() {
@@ -66,9 +72,26 @@ public class CryptoAdapter {
 		return dbManager.executeImmutableQuery();
 	}
 
-	public CryptoAdapter createKeystore(String keystoreName) throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-		ksManager.createKeystore(keystoreName);
+	public CryptoAdapter createAndSaveKeystore(String password,String path) throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
+		ksi = ksManager.createKeystore(password);
+		ksi.setPath(path);
+		ksManager.saveKeystore(ksi);
 		return this;
+	}
+
+	public CryptoAdapter loadKeystore(String path, String password) throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
+		ksi = new KeyStoreInfo(null,path,password);
+		ksi.setKeystore(ksManager.loadKeystore(ksi).getKeystore());
+		return this;
+	}
+
+	public void addAndSaveNewKey(SecretKey sk, String keyName/*, String password,String path*/) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
+		ksManager.insertKey(ksi,sk,keyName);
+		ksManager.saveKeystore(ksi);
+	}
+
+	public SecretKey createKey(Algorithm alg) throws NoSuchAlgorithmException {
+		return encManager.createSymKey(alg);
 	}
 
 }

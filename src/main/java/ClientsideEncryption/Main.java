@@ -3,6 +3,7 @@ package ClientsideEncryption;
 import ClientsideEncryption.exceptions.ConnectionParameterNotValid;
 import ClientsideEncryption.exceptions.InvalidQueryException;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -21,11 +22,25 @@ public class Main {
 
 		CryptoAdapter ca = null;
 		//try {
+		try {
 			ca = CryptoAdapter.newBuilder()
 					.url(url)
 					.username(user)
-					.password(password);
-					//.createKeystore("ciao.p12");
+					.password(password)
+			.createAndSaveKeystore("password","./file.p12");
+
+			SecretKey sk = ca.createKey(Algorithm.AES128);
+			ca.addAndSaveNewKey(sk,"prova");
+		} catch (CertificateException e) {
+			e.printStackTrace();
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		//.createKeystore("ciao.p12");
 		/*} catch (CertificateException e) {
 			e.printStackTrace();
 		} catch (KeyStoreException e) {
