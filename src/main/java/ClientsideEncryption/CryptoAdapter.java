@@ -1,4 +1,4 @@
-package ClientsideEncryption;
+/*package ClientsideEncryption;
 
 import ClientsideEncryption.exceptions.ConnectionParameterNotValid;
 import ClientsideEncryption.exceptions.InvalidQueryException;
@@ -24,27 +24,27 @@ public class CryptoAdapter {
 		ksManager = new KeystoreManager();
 		encManager = new EncryptionManager();
 	}
-	
+
 	public static CryptoAdapter newBuilder() {
 		//TODO("Cambiare tipo di ritorno in CryptoadapterBuilder che offre .build() per tornare un CryptoAdapter");
 		return new CryptoAdapter();
 	}
-	
+
 	public CryptoAdapter url(String url) {
 		dbManager.setUrl(url);
 		return this;
 	}
-	
+
 	public CryptoAdapter username(String username) {
 		dbManager.setUsername(username);
 		return this;
 	}
-	
+
 	public CryptoAdapter password(String password) {
 		dbManager.setPassword(password);
 		return this;
 	}
-	
+
 	public void connect() throws SQLException, ConnectionParameterNotValid {
 		dbManager.connect();
 	}
@@ -90,7 +90,7 @@ public class CryptoAdapter {
 		return this;
 	}
 
-	public void addAndSaveNewKey(SecretKey sk, String keyName/*, String password,String path*/) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
+	public void addAndSaveNewKey(SecretKey sk, String keyName/*, String password,String path*//*) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
 		ksManager.insertKey(ksi,sk,keyName);
 		ksManager.saveKeystore(ksi);
 	}
@@ -100,4 +100,4 @@ public class CryptoAdapter {
 	}
 
 
-}
+}*/

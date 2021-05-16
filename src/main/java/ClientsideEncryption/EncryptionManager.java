@@ -2,10 +2,11 @@ package ClientsideEncryption;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 enum Algorithm{
     AES128,
@@ -34,4 +35,20 @@ public class EncryptionManager {
     }
 
 
+    public String encryptData(SecretKey sk, String toEncrypt, Algorithm alg) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        ImmutablePair<String, Integer> ip = algorithmInfo(alg);
+        Cipher c = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+        c.init(Cipher.ENCRYPT_MODE, sk);
+        byte[] ciphertext = c.doFinal(toEncrypt.getBytes());
+        String b = Base64.getEncoder().withoutPadding().encodeToString(ciphertext);
+        System.out.println(toEncrypt + "-> "+b);
+        return b;
+    }
+
+    public String decryptData(SecretKey sk, String toDecrypt, Algorithm alg) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        Cipher c = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+        c.init(Cipher.DECRYPT_MODE, sk);
+        byte[] plaintext = c.doFinal(toDecrypt.getBytes());
+        return new String(plaintext);
+    }
 }

@@ -5,12 +5,12 @@ import java.security.KeyStore;
 public class KeyStoreInfo {
 
     private KeyStore ks;
-    private String path;
+    //private String path;
     private String password;
 
-    public KeyStoreInfo(KeyStore ks, String path, String password){
+    public KeyStoreInfo(KeyStore ks/*, String path*/, String password){
         this.ks = ks;
-        this.path = path;
+        //this.path = path;
         this.password = password;
     }
 
@@ -23,9 +23,9 @@ public class KeyStoreInfo {
         return password;
     }
 
-    public String getPath() {
+    /*public String getPath() {
         return path;
-    }
+    }*/
 
     public void setKeystore(KeyStore ks) {
         this.ks = ks;
@@ -35,7 +35,7 @@ public class KeyStoreInfo {
         this.password = password;
     }
 
-    public void setPath(String path) {
+    /*public void setPath(String path) {
         this.path = path;
-    }
+    }*/
 }

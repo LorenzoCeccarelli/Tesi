@@ -1,8 +1,10 @@
 package ClientsideEncryption;
 
 import ClientsideEncryption.exceptions.ConnectionParameterNotValid;
+import ClientsideEncryption.utils.Query;
 
 import java.sql.*;
+
 
 public class DatabaseManager {
 
@@ -12,7 +14,11 @@ public class DatabaseManager {
     private Connection con;
     private PreparedStatement ps;
 
-    public DatabaseManager(){}
+    public DatabaseManager(String url, String username, String password){
+        this.url = url;
+        this.username = username;
+        this.password = password;
+    }
 
     public void setUrl(String url){
         this.url = url;
@@ -31,18 +37,43 @@ public class DatabaseManager {
         con = DriverManager.getConnection(url,username,password);
     }
 
-    public void prepareQuery(String query) throws SQLException, ConnectionParameterNotValid {
+    public ResultSet runImmutableQuery(Query query) throws SQLException, ConnectionParameterNotValid {
         if(con == null) throw new ConnectionParameterNotValid("The connection is not instantiated");
-        this.ps = con.prepareStatement(query);
+        this.ps = con.prepareStatement(query.getQuery());
+        if(query.getParameters() != null)
+            query.getParameters().forEach((key,value)-> {
+                try {
+                    ps.setObject(key,value);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            });
+        String[] tokens = query.getQuery().split(" ");
+        if(!tokens[0].toUpperCase().equals("SELECT")) return null; //TODO("Thorw an exception")
+        return ps.executeQuery();
     }
 
-    public boolean executeMutableQuery() throws SQLException {
+    public boolean runMutableQuery(Query query) throws SQLException, ConnectionParameterNotValid {
+        if(con == null) throw new ConnectionParameterNotValid("The connection is not instantiated");
+        this.ps = con.prepareStatement(query.getQuery());
+        if(query.getParameters() != null)
+            query.getParameters().forEach((key,value)-> {
+                try {
+                    ps.setObject(key,value);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            });
+        String[] tokens = query.getQuery().split(" ");
+        if(tokens[0].toUpperCase().equals("SELECT")) return false; //TODO("Thorw an exception")
+        return ps.execute();
+    }
+    /*public boolean executeMutableQuery() throws SQLException {
         return ps.execute();
     }
 
     public ResultSet executeImmutableQuery() throws SQLException {
         return ps.executeQuery();
-    }
-
+    }*/
 
 }
