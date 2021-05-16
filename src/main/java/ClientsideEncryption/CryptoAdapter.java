@@ -7,7 +7,6 @@ import ClientsideEncryption.keystore.KeystoreManager;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -15,9 +14,9 @@ import java.sql.*;
 
 public class CryptoAdapter {
 
-	private DatabaseManager dbManager;
-	private KeystoreManager ksManager;
-	private EncryptionManager encManager;
+	private final  DatabaseManager dbManager;
+	private final  KeystoreManager ksManager;
+	private final EncryptionManager encManager;
 	private KeyStoreInfo ksi;
 
 	private CryptoAdapter() {
@@ -72,6 +71,12 @@ public class CryptoAdapter {
 		return dbManager.executeImmutableQuery();
 	}
 
+	public void createTableByQuery(String query) throws SQLException, ConnectionParameterNotValid {
+		dbManager.prepareQuery(query);
+		dbManager.executeMutableQuery();
+	}
+
+
 	public CryptoAdapter createAndSaveKeystore(String password,String path) throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
 		ksi = ksManager.createKeystore(password);
 		ksi.setPath(path);
@@ -93,5 +98,6 @@ public class CryptoAdapter {
 	public SecretKey createKey(Algorithm alg) throws NoSuchAlgorithmException {
 		return encManager.createSymKey(alg);
 	}
+
 
 }

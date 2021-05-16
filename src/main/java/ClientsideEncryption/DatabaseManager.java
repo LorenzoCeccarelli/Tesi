@@ -4,7 +4,7 @@ import ClientsideEncryption.exceptions.ConnectionParameterNotValid;
 
 import java.sql.*;
 
-class DatabaseManager {
+public class DatabaseManager {
 
     private String url;
     private String username;

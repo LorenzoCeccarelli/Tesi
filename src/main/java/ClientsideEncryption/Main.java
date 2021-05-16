@@ -16,9 +16,9 @@ public class Main {
 		//System.out.println("Ciao!");
 		//Class.forName("com.mysql.cj.jdbc.Driver");
 		// variables
-	      final String url = "jdbc:mysql://localhost:6789/tesi";
-	      final String user = "root";
-	      final String password = "lorenzo97";
+		final String url = "jdbc:mysql://localhost:6789/tesi";
+		final String user = "root";
+		final String password = "lorenzo97";
 
 		CryptoAdapter ca = null;
 		//try {
@@ -51,20 +51,17 @@ public class Main {
 			e.printStackTrace();
 		}*/
 		// establish the connection
-	      try {
+		try {
 			  ca.connect();
-	    	   ca.prepareQuery("insert into prova values (3)")
-			  .executeMutableQuery();
+			  //ca.createTableByQuery("create table crypto (id binary(255) primary key)");
 
-		} catch (SQLException e) {
+
+
+		} catch (SQLException | RuntimeException e) {
 			System.out.println(e.getMessage());
-		} catch(RuntimeException e) {
-			System.out.println(e.getMessage());
-		} catch (InvalidQueryException e) {
-			  e.printStackTrace();
-		  } catch (ConnectionParameterNotValid connectionParameterNotValid) {
+		} catch (ConnectionParameterNotValid connectionParameterNotValid) {
 			  connectionParameterNotValid.printStackTrace();
-		  }
+		}
 
 	}
 
