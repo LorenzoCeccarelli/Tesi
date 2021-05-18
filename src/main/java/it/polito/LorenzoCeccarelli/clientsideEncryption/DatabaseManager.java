@@ -1,7 +1,7 @@
-package ClientsideEncryption;
+package it.polito.LorenzoCeccarelli.clientsideEncryption;
 
-import ClientsideEncryption.exceptions.ConnectionParameterNotValid;
-import ClientsideEncryption.utils.Query;
+import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.ConnectionParameterNotValid;
+import it.polito.LorenzoCeccarelli.clientsideEncryption.utils.Query;
 
 import java.sql.*;
 
@@ -68,6 +68,7 @@ public class DatabaseManager {
         if(tokens[0].toUpperCase().equals("SELECT")) return false; //TODO("Thorw an exception")
         return ps.execute();
     }
+
     /*public boolean executeMutableQuery() throws SQLException {
         return ps.execute();
     }

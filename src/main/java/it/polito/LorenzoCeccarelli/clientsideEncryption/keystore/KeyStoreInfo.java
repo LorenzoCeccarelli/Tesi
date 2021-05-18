@@ -1,4 +1,4 @@
-package ClientsideEncryption.keystore;
+package it.polito.LorenzoCeccarelli.clientsideEncryption.keystore;
 
 import java.security.KeyStore;
 

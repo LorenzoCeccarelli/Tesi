@@ -1,4 +1,4 @@
-package ClientsideEncryption.exceptions;
+package it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions;
 
 
 public class InvalidQueryException extends  Exception{

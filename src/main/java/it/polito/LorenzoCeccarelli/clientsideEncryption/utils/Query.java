@@ -1,4 +1,4 @@
-package ClientsideEncryption.utils;
+package it.polito.LorenzoCeccarelli.clientsideEncryption.utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +13,6 @@ public class Query {
     }
 
     public void setParameter(int position, String value){
-        System.out.println(position);
-        System.out.println(value);
         parameters.put(position, value);
     }
 
@@ -25,4 +23,6 @@ public class Query {
     public Map<Integer, String> getParameters() {
         return parameters;
     }
+
+
 }
