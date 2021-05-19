@@ -1,4 +1,4 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption.utils;
+package it.polito.LorenzoCeccarelli.clientsideEncryption.database;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 public class Query {
 
     private String query;
-    private HashMap<Integer,String> parameters = new HashMap<Integer,String>();
+    private HashMap<Integer,String> parameters = new HashMap<>();
 
     public Query(String query){
         this.query = query;

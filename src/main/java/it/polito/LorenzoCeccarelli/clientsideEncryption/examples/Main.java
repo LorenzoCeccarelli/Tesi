@@ -1,20 +1,20 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption;
+package it.polito.LorenzoCeccarelli.clientsideEncryption.examples;
 
 import it.polito.LorenzoCeccarelli.clientsideEncryption.crypto.CryptoUtils;
+import it.polito.LorenzoCeccarelli.clientsideEncryption.database.DatabaseManager;
 import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.ConnectionParameterNotValid;
 import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.DecryptionError;
 import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.EncryptionError;
 import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.KeystoreOperationError;
 import it.polito.LorenzoCeccarelli.clientsideEncryption.keystore.KeyStoreInfo;
 import it.polito.LorenzoCeccarelli.clientsideEncryption.keystore.KeystoreUtils;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.utils.Cookie;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.utils.Query;
+import it.polito.LorenzoCeccarelli.clientsideEncryption.token.EncryptedToken;
+import it.polito.LorenzoCeccarelli.clientsideEncryption.token.Token;
+import it.polito.LorenzoCeccarelli.clientsideEncryption.token.TokenParser;
+import it.polito.LorenzoCeccarelli.clientsideEncryption.database.Query;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
-import java.security.*;
-import java.security.cert.CertificateException;
 import java.sql.*;
 import java.util.Arrays;
 
@@ -48,7 +48,7 @@ public class Main {
 			byte[] cipherKey = CryptoUtils.encryptDataWithPrefixIV(masterKey, sk.getEncoded());
 			System.out.println("Stringa cifrata " + Arrays.toString(ciphertext));
 			System.out.println("Chiave cifrata " + Arrays.toString(cipherKey));
-			Cookie c = new Cookie(cipherKey, ciphertext);
+			EncryptedToken c = new EncryptedToken(cipherKey, ciphertext);
 			System.out.println("Invio al db " + c);
 			q.setParameter(1, c.toString());
 			dbManager.runMutableQuery(q);
@@ -57,11 +57,14 @@ public class Main {
 			while (rs.next()) {
 				String a = rs.getString("id");
 				System.out.println("ho ricevuto da db " + a);
-				Cookie ck = new Cookie(a);
-				byte[] key = CryptoUtils.decryptDataWithPrefixIV(masterKey, ck.getEncryptedKey());
-				System.out.println("La chiave con cui è stato cifrato: " + Arrays.toString(key));
-				SecretKey originalKey = new SecretKeySpec(key, 0, key.length, "AES");
-				System.out.println("Dati originali: " + new String(CryptoUtils.decryptDataWithPrefixIV(originalKey, ck.getCiphertext())));
+				//EncryptedToken ck = new EncryptedToken(a);
+				Token tk = TokenParser.parseToken(a);
+				if(tk instanceof EncryptedToken) {
+					byte[] key = CryptoUtils.decryptDataWithPrefixIV(masterKey, ((EncryptedToken) tk).getEncryptedKey());
+					System.out.println("La chiave con cui è stato cifrato: " + Arrays.toString(key));
+					SecretKey originalKey = new SecretKeySpec(key, 0, key.length, "AES");
+					System.out.println("Dati originali: " + new String(CryptoUtils.decryptDataWithPrefixIV(originalKey, ((EncryptedToken) tk).getCiphertext())));
+				}
 				//System.out.println(encManager.decryptDataWithPrefixIV(sk,a,Algorithm.AES128));
 			}
 		}catch (EncryptionError | DecryptionError | KeystoreOperationError | SQLException | ConnectionParameterNotValid encryptionError) {

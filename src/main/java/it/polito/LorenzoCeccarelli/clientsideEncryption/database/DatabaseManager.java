@@ -1,7 +1,6 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption;
+package it.polito.LorenzoCeccarelli.clientsideEncryption.database;
 
 import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.ConnectionParameterNotValid;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.utils.Query;
 
 import java.sql.*;
 
@@ -39,15 +38,7 @@ public class DatabaseManager {
 
     public ResultSet runImmutableQuery(Query query) throws SQLException, ConnectionParameterNotValid {
         if(con == null) throw new ConnectionParameterNotValid("The connection is not instantiated");
-        this.ps = con.prepareStatement(query.getQuery());
-        if(query.getParameters() != null)
-            query.getParameters().forEach((key,value)-> {
-                try {
-                    ps.setObject(key,value);
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                }
-            });
+        setParameters(query);
         String[] tokens = query.getQuery().split(" ");
         if(!tokens[0].toUpperCase().equals("SELECT")) return null; //TODO("Thorw an exception")
         return ps.executeQuery();
@@ -55,6 +46,13 @@ public class DatabaseManager {
 
     public boolean runMutableQuery(Query query) throws SQLException, ConnectionParameterNotValid {
         if(con == null) throw new ConnectionParameterNotValid("The connection is not instantiated");
+        setParameters(query);
+        String[] tokens = query.getQuery().split(" ");
+        if(tokens[0].toUpperCase().equals("SELECT")) return false; //TODO("Thorw an exception")
+        return ps.execute();
+    }
+
+    private void setParameters(Query query) throws SQLException {
         this.ps = con.prepareStatement(query.getQuery());
         if(query.getParameters() != null)
             query.getParameters().forEach((key,value)-> {
@@ -64,17 +62,8 @@ public class DatabaseManager {
                     throwables.printStackTrace();
                 }
             });
-        String[] tokens = query.getQuery().split(" ");
-        if(tokens[0].toUpperCase().equals("SELECT")) return false; //TODO("Thorw an exception")
-        return ps.execute();
     }
 
-    /*public boolean executeMutableQuery() throws SQLException {
-        return ps.execute();
-    }
 
-    public ResultSet executeImmutableQuery() throws SQLException {
-        return ps.executeQuery();
-    }*/
 
 }
