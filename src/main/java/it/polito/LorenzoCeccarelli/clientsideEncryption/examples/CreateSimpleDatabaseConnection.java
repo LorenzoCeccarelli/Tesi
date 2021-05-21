@@ -9,8 +9,8 @@ public class CreateSimpleDatabaseConnection {
     public static void main(String[] args){
 
         final String url = "jdbc:mysql://localhost:6789/tesi";
-        final String username = "root";
-        final String password = "lorenzo97";
+        final String username = "YourUsername";
+        final String password = "YourPassword";
 
         DatabaseManager dm = new DatabaseManager(url,username,password);
         try {
