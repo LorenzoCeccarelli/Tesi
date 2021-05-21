@@ -46,6 +46,7 @@ public class KeystoreUtils {
             //TODO("check extension using Guava https://www.baeldung.com/java-file-extension")
             FileOutputStream fos = new FileOutputStream(path);
             ksi.getKeystore().store(fos, pwdArray);
+            fos.close();
         } catch (CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException e) {
             throw new KeystoreOperationError(e.getMessage());
         }
@@ -86,7 +87,7 @@ public class KeystoreUtils {
     }
 
     /**
-     * Permits to insert a key into the keystore ksi
+     * Permits to insert a key into the keystore ksi (but not in the filesystem)
      * @param ksi KeyStoreInfo object
      * @param sk the secretKey to add to the keystore
      * @param keyName the key alias

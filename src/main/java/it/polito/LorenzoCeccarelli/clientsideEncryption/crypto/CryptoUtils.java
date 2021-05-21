@@ -15,20 +15,21 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
-/**
- * Supported Algorithm
- */
-enum Algorithm{
-    AES128,
-    AES192,
-    AES256
-}
 
 public class CryptoUtils {
 
     private static final int IV_LENGTH_BYTE = 12;
     private static final int TAG_LENGTH_BIT = 128;
     private static final String ENCRYPT_ALGO = "AES/GCM/NoPadding";
+
+    /**
+     * Supported Algorithm
+     */
+    public enum Algorithm{
+        AES128,
+        AES192,
+        AES256
+    }
 
     private CryptoUtils(){}
 
