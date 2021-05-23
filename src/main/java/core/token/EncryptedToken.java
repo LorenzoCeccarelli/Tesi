@@ -1,4 +1,4 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption.token;
+package core.token;
 
 import java.util.Base64;
 

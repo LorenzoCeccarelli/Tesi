@@ -1,6 +1,6 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption.database;
+package core.database;
 
-import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.ConnectionParameterNotValid;
+import core.exceptions.ConnectionParameterNotValid;
 
 import java.sql.*;
 

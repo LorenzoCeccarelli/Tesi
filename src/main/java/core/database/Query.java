@@ -1,4 +1,4 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption.database;
+package core.database;
 
 import java.util.HashMap;
 import java.util.Map;

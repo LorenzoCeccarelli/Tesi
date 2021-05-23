@@ -1,6 +1,7 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption.keystore;
+package core.keystore;
 
-import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.KeystoreOperationError;
+import core.exceptions.KeyDoesNotExistException;
+import core.exceptions.KeystoreOperationError;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -59,12 +60,14 @@ public class KeystoreUtils {
      * @return KeystoreInfoObject
      * @throws KeystoreOperationError
      */
-    public static KeyStoreInfo loadKeystore(String password, String path) throws KeystoreOperationError {
+    public static KeyStoreInfo loadKeystore(String password, String path) throws KeystoreOperationError, FileNotFoundException {
         try {
             KeyStore ks = KeyStore.getInstance("pkcs12");
             char[] pwdArray = password.toCharArray();
             ks.load(new FileInputStream(path), pwdArray);
             return new KeyStoreInfo(ks, password);
+        } catch(FileNotFoundException ex){
+            throw ex;
         } catch (CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException e) {
             throw new KeystoreOperationError(e.getMessage());
         }
@@ -77,11 +80,12 @@ public class KeystoreUtils {
      * @return the symmetric key
      * @throws KeystoreOperationError
      */
-    public static SecretKey getKey(KeyStoreInfo ksi, String keyName) throws KeystoreOperationError {
+    public static SecretKey getKey(KeyStoreInfo ksi, String keyName) throws KeystoreOperationError, KeyDoesNotExistException {
         try {
             Key k = ksi.getKeystore().getKey(keyName, ksi.getPassword().toCharArray());
+            if(k == null) throw new KeyDoesNotExistException("Key called '"+keyName+"' does not exist in keystore ");
             return new SecretKeySpec(k.getEncoded(), 0, k.getEncoded().length, "AES");
-        } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException e) {
+        }  catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException  e) {
             throw new KeystoreOperationError(e.getMessage());
         }
     }

@@ -1,4 +1,4 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions;
+package core.exceptions;
 
 public class ConnectionParameterNotValid extends Exception{
     public ConnectionParameterNotValid(String errorMessage){ super(errorMessage);}

@@ -1,11 +1,13 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption.examples;
+package core.examples;
 
-import it.polito.LorenzoCeccarelli.clientsideEncryption.crypto.CryptoUtils;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.KeystoreOperationError;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.keystore.KeyStoreInfo;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.keystore.KeystoreUtils;
+import core.crypto.CryptoUtils;
+import core.exceptions.KeyDoesNotExistException;
+import core.exceptions.KeystoreOperationError;
+import core.keystore.KeyStoreInfo;
+import core.keystore.KeystoreUtils;
 
 import javax.crypto.SecretKey;
+import java.io.FileNotFoundException;
 import java.security.NoSuchAlgorithmException;
 
 public class KeystoreUsage {
@@ -30,7 +32,7 @@ public class KeystoreUsage {
             // Delete a keystore
             KeystoreUtils.deleteKeystore(path);
 
-        } catch (KeystoreOperationError | NoSuchAlgorithmException keystoreOperationError) {
+        } catch (KeystoreOperationError | NoSuchAlgorithmException | FileNotFoundException | KeyDoesNotExistException keystoreOperationError) {
             keystoreOperationError.printStackTrace();
         }
     }

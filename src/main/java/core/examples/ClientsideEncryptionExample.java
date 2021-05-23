@@ -1,21 +1,22 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption.examples;
+package core.examples;
 
-import it.polito.LorenzoCeccarelli.clientsideEncryption.crypto.CryptoUtils;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.database.DatabaseManager;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.ConnectionParameterNotValid;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.DecryptionError;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.EncryptionError;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.KeystoreOperationError;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.keystore.KeyStoreInfo;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.keystore.KeystoreUtils;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.token.ClearToken;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.token.EncryptedToken;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.token.Token;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.token.TokenParser;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.database.Query;
+import core.crypto.CryptoUtils;
+import core.database.DatabaseManager;
+import core.database.Query;
+import core.exceptions.ConnectionParameterNotValid;
+import core.exceptions.DecryptionError;
+import core.exceptions.EncryptionError;
+import core.exceptions.KeystoreOperationError;
+import core.keystore.KeyStoreInfo;
+import core.keystore.KeystoreUtils;
+import core.token.ClearToken;
+import core.token.EncryptedToken;
+import core.token.Token;
+import core.token.TokenParser;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.FileNotFoundException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 
@@ -91,7 +92,7 @@ public class ClientsideEncryptionExample {
 					System.out.println(((ClearToken) tk).getData());
 				}
 			}
-		}catch (EncryptionError | DecryptionError | KeystoreOperationError | SQLException | ConnectionParameterNotValid | NoSuchAlgorithmException encryptionError) {
+		}catch (EncryptionError | DecryptionError | KeystoreOperationError | SQLException | ConnectionParameterNotValid | NoSuchAlgorithmException  encryptionError) {
 			encryptionError.printStackTrace();
 		}
 	}

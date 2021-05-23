@@ -1,4 +1,4 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions;
+package core.exceptions;
 
 public class KeystoreOperationError extends Exception{
     public KeystoreOperationError(String errorMessage){ super(errorMessage);}

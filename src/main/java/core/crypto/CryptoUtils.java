@@ -1,7 +1,7 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption.crypto;
+package core.crypto;
 
-import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.DecryptionError;
-import it.polito.LorenzoCeccarelli.clientsideEncryption.exceptions.EncryptionError;
+import core.exceptions.DecryptionError;
+import core.exceptions.EncryptionError;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;

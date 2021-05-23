@@ -1,4 +1,4 @@
-package it.polito.LorenzoCeccarelli.clientsideEncryption.token;
+package core.token;
 
 import java.util.Base64;
 
@@ -16,7 +16,7 @@ public class TokenParser {
         else if (decodedHeader.equals("CIPHERTEXT")){
             byte[] ciphertext = Base64.getUrlDecoder().decode(tokens[1]);
             byte[] encryptedKey = Base64.getUrlDecoder().decode(tokens[2]);
-            return new EncryptedToken(encryptedKey,ciphertext);
+            return new EncryptedToken(encryptedKey,ciphertext );
         }
         else return null;
     }
