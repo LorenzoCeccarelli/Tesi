@@ -91,6 +91,20 @@ public class KeystoreUtils {
     }
 
     /**
+     * Check if a key exist in a keystore
+     * @param ksi
+     * @param keyName
+     * @return
+     * @throws UnrecoverableKeyException
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     */
+    public static boolean existKey(KeyStoreInfo ksi, String keyName) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
+        Key k = ksi.getKeystore().getKey(keyName, ksi.getPassword().toCharArray());
+        if(k == null) return false;
+        return true;
+    }
+    /**
      * Permits to insert a key into the keystore ksi (but not in the filesystem)
      * @param ksi KeyStoreInfo object
      * @param sk the secretKey to add to the keystore

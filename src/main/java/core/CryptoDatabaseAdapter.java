@@ -3,6 +3,7 @@ package core;
 import core.crypto.CryptoUtils;
 import core.database.DatabaseManager;
 import core.database.Query;
+import core.database.Tuple;
 import core.exceptions.*;
 import core.keystore.KeyStoreInfo;
 import core.keystore.KeystoreUtils;
@@ -17,11 +18,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -31,6 +33,7 @@ public class CryptoDatabaseAdapter {
     private Configuration configuration;
     private DatabaseManager dbManager;
     private KeyStoreInfo ksi;
+    private Query query;
 
     private CryptoDatabaseAdapter(Configuration conf){
         this.configuration = conf;
@@ -57,15 +60,20 @@ public class CryptoDatabaseAdapter {
 
         //Check if the masterKey (called masterKeyName) exists, if not create it
         try {
-            SecretKey masterKey = KeystoreUtils.getKey(ksi, configuration.getMasterKeyName());
-            System.out.println(configuration.getMasterKeyName() + "Key exists");
-        } catch (KeyDoesNotExistException ex){
-            //Create the masterKey
-            System.out.println(configuration.getMasterKeyName() + "Key does not exist");
-            SecretKey masterKey = CryptoUtils.createSymKey(CryptoUtils.Algorithm.AES256);
-            KeystoreUtils.insertKey(ksi,masterKey, configuration.getMasterKeyName());
-            KeystoreUtils.saveKeystore(ksi, configuration.getKeystorePath());
+            if(!KeystoreUtils.existKey(ksi,configuration.getMasterKeyName())){
+                //Create the masterKey
+                System.out.println(configuration.getMasterKeyName() + "Key does not exist");
+                SecretKey masterKey = CryptoUtils.createSymKey(CryptoUtils.Algorithm.AES256);
+                KeystoreUtils.insertKey(ksi,masterKey, configuration.getMasterKeyName());
+                KeystoreUtils.saveKeystore(ksi, configuration.getKeystorePath());
+            } else System.out.println(configuration.getMasterKeyName() + "Key exists");
+        } catch (UnrecoverableKeyException | KeyStoreException e) {
+            e.printStackTrace();
         }
+    }
+
+    public QueryBuilder newQueryBuilder(String query){
+        return new QueryBuilder(query);
     }
 
     public static class Builder{
@@ -81,7 +89,7 @@ public class CryptoDatabaseAdapter {
         public CryptoDatabaseAdapter buildByFile(String configurationFilePath) throws ConfigurationFileError {
             try {
                 File configFile = new File(configurationFilePath);
-                FileReader reader = null;
+                FileReader reader;
                 reader = new FileReader(configFile);
                 Properties props = new Properties();
                 props.load(reader);
@@ -146,7 +154,7 @@ public class CryptoDatabaseAdapter {
     public class QueryBuilder{
         private Query query;
 
-        public QueryBuilder(String query_){
+        private QueryBuilder(String query_){
             query = new Query(query_);
         }
 
@@ -171,18 +179,20 @@ public class CryptoDatabaseAdapter {
             return this;
         }
 
-        public boolean runMutable() throws SQLException, ConnectionParameterNotValid {
+        public boolean run() throws SQLException, ConnectionParameterNotValid {
             return dbManager.runMutableQuery(query);
         }
 
-        public Set<String> runImmutable() throws SQLException, ConnectionParameterNotValid, DecryptionError, KeystoreOperationError, KeyDoesNotExistException {
+        public Set<Tuple> runSelect() throws SQLException, ConnectionParameterNotValid, DecryptionError, KeystoreOperationError, KeyDoesNotExistException {
             ResultSet rs = dbManager.runImmutableQuery(query);
             ResultSetMetaData rsmd = rs.getMetaData();
             SecretKey masterKey = KeystoreUtils.getKey(ksi, configuration.getMasterKeyName());
-            Set<String> result = new HashSet<>();
+            Set<Tuple> result = new HashSet<>();
             while (rs.next()) {
+                Tuple t = new Tuple();
                 for(int i=0; i<rsmd.getColumnCount();i++) {
-                    String token = rs.getString(rsmd.getColumnLabel(i+1));
+                    String columnName = rsmd.getColumnName(i+1);
+                    String token = rs.getString(columnName);
 
                     //Parse token
                     Token tk = TokenParser.parseToken(token);
@@ -194,20 +204,22 @@ public class CryptoDatabaseAdapter {
                         SecretKey originalKey = new SecretKeySpec(key, 0, key.length, "AES");
                         //Decrypt the original data e print it
                         String originalData = new String(CryptoUtils.decryptDataWithPrefixIV(originalKey, ((EncryptedToken) tk).getCiphertext()));
-                        System.out.println("Original data retrieved by the db: " + originalData);
+                        //System.out.println("Original data retrieved by the db: " + originalData);
+                        t.setColumn(columnName,originalData);
 
                     }
                     //If token is a ClearToken print the data
                     if (tk instanceof ClearToken) {
+                        String originalData = ((ClearToken) tk).getData();
                         System.out.println(((ClearToken) tk).getData());
+                        t.setColumn(columnName,originalData);
                     }
+
                 }
+                result.add(t);
             }
             return result;
         }
 
     }
-
-
-
 }
