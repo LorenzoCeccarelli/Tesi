@@ -104,6 +104,30 @@ public class KeystoreUtils {
         if(k == null) return false;
         return true;
     }
+
+    /**
+     * This method checks if a specified keystore exist
+     * @param password
+     * @param path
+     * @return
+     * @throws CertificateException
+     * @throws KeyStoreException
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
+    public static boolean existKeystore(String password, String path) throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
+        try {
+            KeyStore ks = null;
+            ks = KeyStore.getInstance("pkcs12");
+            char[] pwdArray = password.toCharArray();
+            ks.load(new FileInputStream(path), pwdArray);
+            return true;
+        } catch (FileNotFoundException e) {
+            return false;
+        } catch (CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException e) {
+            throw e;
+        }
+    }
     /**
      * Permits to insert a key into the keystore ksi (but not in the filesystem)
      * @param ksi KeyStoreInfo object

@@ -25,8 +25,8 @@ public class TransparentUsage {
             Set<Tuple> rs = cda.newQueryBuilder("select * from crypto")
                     .runSelect();
             rs.forEach(System.out::println);
-        } catch (ConfigurationFileError | SQLException | KeystoreOperationError | ConnectionParameterNotValid | NoSuchAlgorithmException | InvalidQueryException | DecryptionError | KeyDoesNotExistException configurationFileError) {
-            configurationFileError.printStackTrace();
+        } catch (ClientsideEncryptionError error) {
+            error.printStackTrace();
         }
     }
 }

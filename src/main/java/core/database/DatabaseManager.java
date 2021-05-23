@@ -1,6 +1,7 @@
 package core.database;
 
 import core.exceptions.ConnectionParameterNotValid;
+import core.exceptions.DatabaseError;
 
 import java.sql.*;
 
@@ -31,7 +32,7 @@ public class DatabaseManager {
         this.password = password;
     }
 
-    public void connect() throws SQLException, ConnectionParameterNotValid {
+    public void connect() throws ConnectionParameterNotValid, SQLException {
         if(url == null || username == null || password == null) throw new ConnectionParameterNotValid("Url, username or password are null");
         con = DriverManager.getConnection(url,username,password);
     }

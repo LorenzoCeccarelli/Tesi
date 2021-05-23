@@ -1,5 +1,5 @@
 package core.exceptions;
 
-public class ConfigurationFileError extends Exception{
+public class ConfigurationFileError extends ClientsideEncryptionError{
     public ConfigurationFileError(String errorMessage){ super(errorMessage); }
 }
