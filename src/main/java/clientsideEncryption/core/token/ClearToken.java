@@ -14,8 +14,15 @@ public class ClearToken extends Token {
         return data;
     }
 
-    @Override
+    /*@Override
     public String toString() {
+        String header = Base64.getUrlEncoder().withoutPadding().encodeToString("PLAINTEXT".getBytes());
+        String encodedData = Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
+        return header + "." + encodedData;
+    }*/
+
+    @Override
+    public String generateToken() {
         String header = Base64.getUrlEncoder().withoutPadding().encodeToString("PLAINTEXT".getBytes());
         String encodedData = Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
         return header + "." + encodedData;

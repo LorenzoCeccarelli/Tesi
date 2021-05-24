@@ -22,11 +22,18 @@ public class EncryptedToken extends Token{
         return ciphertext;
     }
 
-    public String toString(){
+    /*public String toString(){
+        String header = Base64.getUrlEncoder().withoutPadding().encodeToString("CIPHERTEXT".getBytes());
+        String ciphertextB64 = Base64.getUrlEncoder().withoutPadding().encodeToString(ciphertext);
+        String encryptedKeyB64 = Base64.getUrlEncoder().withoutPadding().encodeToString(encryptedKey);
+        return header+"."+ciphertextB64+"."+encryptedKeyB64;
+    }*/
+
+    @Override
+    public String generateToken() {
         String header = Base64.getUrlEncoder().withoutPadding().encodeToString("CIPHERTEXT".getBytes());
         String ciphertextB64 = Base64.getUrlEncoder().withoutPadding().encodeToString(ciphertext);
         String encryptedKeyB64 = Base64.getUrlEncoder().withoutPadding().encodeToString(encryptedKey);
         return header+"."+ciphertextB64+"."+encryptedKeyB64;
     }
-
 }

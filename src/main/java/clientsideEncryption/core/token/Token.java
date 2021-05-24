@@ -1,6 +1,7 @@
 package clientsideEncryption.core.token;
 
 
-public class Token {
+public abstract class Token {
 
+    public abstract String generateToken();
 }

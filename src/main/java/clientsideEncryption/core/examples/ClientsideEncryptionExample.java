@@ -60,7 +60,7 @@ public class ClientsideEncryptionExample {
 			EncryptedToken c = new EncryptedToken(cipherKey, ciphertext);
 
 			//Set the token into the query
-			q.setParameter(1, c.toString());
+			q.setParameter(1, c.generateToken());
 
 			//Run the query (INSERT modifies the DB)
 			dbManager.runMutableQuery(q);

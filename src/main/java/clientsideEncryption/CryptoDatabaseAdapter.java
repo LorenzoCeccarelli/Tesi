@@ -8,6 +8,7 @@ import clientsideEncryption.core.database.Tuple;
 import clientsideEncryption.core.exceptions.*;
 import clientsideEncryption.core.keystore.KeyStoreInfo;
 import clientsideEncryption.core.keystore.KeystoreUtils;
+import clientsideEncryption.core.logger.AdapterLogger;
 import clientsideEncryption.core.token.ClearToken;
 import clientsideEncryption.core.token.EncryptedToken;
 import clientsideEncryption.core.token.Token;
@@ -28,12 +29,14 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class CryptoDatabaseAdapter {
 
     private Configuration configuration;
     private DatabaseManager dbManager;
     private KeyStoreInfo ksi;
+    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
      * The constructor is private. It is possible to create a CryptoDatabaseAdapter using Builder inner static class
@@ -49,32 +52,41 @@ public class CryptoDatabaseAdapter {
      */
     public void init() throws InitializationError {
         try {
+            //Setup the logger
+            AdapterLogger.setup();
+            LOGGER.info("Init CryptoDatabaseAdapter");
+
             //Create a new database connection
             dbManager = new DatabaseManager(configuration.getDatabaseUrl(), configuration.getDatabaseUsername(), configuration.getDatabasePassword());
             dbManager.connect();
-            System.out.println("Connesso a: " + configuration.getDatabaseUrl());
+            LOGGER.info("Connected to: " + configuration.getDatabaseUrl());
 
             //Try to load the keystore
-            if(KeystoreUtils.existKeystore(configuration.getKeystorePassword(), configuration.getKeystorePath()))
+            if(KeystoreUtils.existKeystore(configuration.getKeystorePassword(), configuration.getKeystorePath())) {
+                LOGGER.info("Keystore at '"+configuration.getKeystorePath()+"' exists");
                 ksi = KeystoreUtils.loadKeystore(configuration.getKeystorePassword(), configuration.getKeystorePath());
+            }
             else{
                 //If the keystore does not exist create it
-                System.out.println("Keystore non esistente");
+                LOGGER.warning("Keystore at '"+configuration.getKeystorePath()+"' does not exist. Creating it...");
                 ksi = KeystoreUtils.createKeystore(configuration.getKeystorePassword());
                 KeystoreUtils.saveKeystore(ksi, configuration.getKeystorePath());
+                LOGGER.warning("Keystore at '"+configuration.getKeystorePath()+"' created");
             }
 
             //Check if the masterKey (called masterKeyName) exists, if not create it
             if(!KeystoreUtils.existKey(ksi,configuration.getMasterKeyName())){
                 //Create the masterKey
-                System.out.println(configuration.getMasterKeyName() + "Key does not exist");
+                LOGGER.warning("Key named '"+configuration.getMasterKeyName()+"' does not exist. Creating it...");
                 SecretKey masterKey = CryptoUtils.createSymKey(CryptoUtils.Algorithm.AES256);
                 KeystoreUtils.insertKey(ksi,masterKey, configuration.getMasterKeyName());
                 KeystoreUtils.saveKeystore(ksi, configuration.getKeystorePath());
-            } else System.out.println(configuration.getMasterKeyName() + "Key exists");
+                LOGGER.warning("Key named '"+configuration.getMasterKeyName()+"' creates");
+            } else LOGGER.info("Key named '"+configuration.getMasterKeyName()+"' exists");
 
 
         } catch (SQLException | ConnectionParameterNotValid | CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException | KeystoreOperationError | UnrecoverableKeyException throwables) {
+            LOGGER.severe("Error: "+throwables.getMessage());
             throw new InitializationError(throwables.getMessage());
         }
     }
@@ -240,7 +252,7 @@ public class CryptoDatabaseAdapter {
                 byte[] ciphertext = CryptoUtils.encryptDataWithPrefixIV(sk, value.getBytes());
                 byte[] cipherkey = CryptoUtils.encryptDataWithPrefixIV(masterKey,sk.getEncoded());
                 EncryptedToken et = new EncryptedToken(cipherkey,ciphertext);
-                query.setParameter(position,et.toString());
+                query.setParameter(position,et.generateToken());
                 return this;
 
             } catch (NoSuchAlgorithmException | EncryptionError | KeystoreOperationError | KeyDoesNotExistException e) {
@@ -256,7 +268,7 @@ public class CryptoDatabaseAdapter {
          */
         public QueryBuilder setParameter(int position, String value){
             ClearToken ct = new ClearToken(value);
-            query.setParameter(position,ct.toString());
+            query.setParameter(position,ct.generateToken());
             return this;
         }
 
@@ -268,8 +280,10 @@ public class CryptoDatabaseAdapter {
          */
         public boolean run() throws QueryExecutionError {
             try {
+                LOGGER.info("Run: "+ query.getQuery());
                 return dbManager.runMutableQuery(query);
             } catch (SQLException | ConnectionParameterNotValid throwables) {
+                LOGGER.severe("Error: "+ throwables.getMessage());
                 throw new QueryExecutionError(throwables.getMessage());
             }
         }
@@ -281,6 +295,7 @@ public class CryptoDatabaseAdapter {
          */
         public Set<Tuple> runSelect() throws QueryExecutionError {
             try {
+                LOGGER.info("Run: "+ query.getQuery());
                 ResultSet rs = dbManager.runImmutableQuery(query);
                 ResultSetMetaData rsmd = rs.getMetaData();
                 SecretKey masterKey = KeystoreUtils.getKey(ksi, configuration.getMasterKeyName());
@@ -308,7 +323,7 @@ public class CryptoDatabaseAdapter {
                         //If token is a ClearToken print the data
                         if (tk instanceof ClearToken) {
                             String originalData = ((ClearToken) tk).getData();
-                            System.out.println(((ClearToken) tk).getData());
+                            //System.out.println(((ClearToken) tk).getData());
                             t.setColumn(columnName, originalData);
                         }
 
@@ -317,7 +332,8 @@ public class CryptoDatabaseAdapter {
                 }
                 return result;
             } catch (SQLException | KeystoreOperationError | KeyDoesNotExistException | ConnectionParameterNotValid | DecryptionError throwables) {
-               throw new QueryExecutionError(throwables.getMessage());
+                LOGGER.severe("Error: "+throwables.getMessage());
+                throw new QueryExecutionError(throwables.getMessage());
             }
         }
 
