@@ -67,7 +67,7 @@ public class CryptoUtils {
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
-    public static SecretKey CreateKeyFromPassword(Algorithm alg, char[] password, byte[] salt)
+    public static SecretKey createKeyFromPassword(Algorithm alg, char[] password, byte[] salt)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
 
         ImmutablePair<String, Integer> ip = algorithmInfo(alg);
