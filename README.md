@@ -37,7 +37,7 @@ La seguente figura mostra la struttura del Clientside Encryption Package e i suo
 
 ![Architettura](./docs/images/Architettura.png)
 
-Il software si comporta come una interfaccia per accedere al database ed è composto da un package denominato Core e da una classe denominata CryptoDatabaseAdapter.
+Il software si comporta come una interfaccia per accedere al database (per ora è supportato solo MySQL) ed è composto da un package denominato Core e da una classe denominata CryptoDatabaseAdapter.
 
 ### Package Core
 Il package ***Core*** rappresenta il nucleo del sistema ed è composto da diversi package per la gestione del database, keystore, crittografia e logging. 
