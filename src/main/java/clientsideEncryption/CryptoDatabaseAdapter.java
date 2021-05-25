@@ -1,6 +1,5 @@
 package clientsideEncryption;
 
-import clientsideEncryption.core.Configuration;
 import clientsideEncryption.core.crypto.CryptoUtils;
 import clientsideEncryption.core.database.DatabaseManager;
 import clientsideEncryption.core.database.Query;

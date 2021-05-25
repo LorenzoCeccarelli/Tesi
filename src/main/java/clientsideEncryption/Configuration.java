@@ -1,4 +1,4 @@
-package clientsideEncryption.core;
+package clientsideEncryption;
 
 import clientsideEncryption.core.exceptions.ConfigurationFileError;
 
