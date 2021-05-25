@@ -48,7 +48,7 @@ public class CryptoUtils {
      * Create a symmetric key compatible with "alg"
      * @param alg the algorithm type
      * @return the generated symmetric key
-     * @throws NoSuchAlgorithmException
+     * @throws NoSuchAlgorithmException throws it if the algorithm is invalid
      */
     public static SecretKey createSymKey(Algorithm alg) throws NoSuchAlgorithmException {
         ImmutablePair<String,Integer> ip = algorithmInfo(alg);
@@ -60,12 +60,12 @@ public class CryptoUtils {
 
     /**
      * Generate key from password using a key derivation function
-     * @param alg
-     * @param password
-     * @param salt
+     * @param alg the algorithm
+     * @param password the initial password
+     * @param salt the salt
      * @return the generated key
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException throws it if the algorithm is invalid
+     * @throws InvalidKeySpecException throws it if the key is invalid
      */
     public static SecretKey createKeyFromPassword(Algorithm alg, char[] password, byte[] salt)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -74,15 +74,14 @@ public class CryptoUtils {
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
         // iterationCount = 65536
         KeySpec spec = new PBEKeySpec(password, salt, 65536, ip.right);
-        SecretKey secret = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), ip.left);
-        return secret;
+        return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), ip.left);
     }
 
     /**
      * Retrieve the "al" information (name, key length)
-     * @param al
+     * @param al the algorithm
      * @return a Pair containing the algorithm information
-     * @throws NoSuchAlgorithmException
+     * @throws NoSuchAlgorithmException throws it if the algorithm is invalid
      */
     private static ImmutablePair<String, Integer> algorithmInfo(Algorithm al) throws NoSuchAlgorithmException {
         switch (al){
@@ -99,7 +98,7 @@ public class CryptoUtils {
      * @param toEncrypt plaintext
      * @param iv Initialization Vector
      * @return ciphertext
-     * @throws EncryptionError
+     * @throws EncryptionError throws it if an error during encryption occurs
      */
     public static byte[] encryptData(SecretKey sk, byte[] toEncrypt, byte[] iv) throws EncryptionError {
         try {
@@ -116,7 +115,7 @@ public class CryptoUtils {
      * @param sk SecretKey
      * @param toEncrypt plaintext
      * @return ciphertext + iv
-     * @throws EncryptionError
+     * @throws EncryptionError throws it if an error during the encryption occurs
      */
     public static byte[] encryptDataWithPrefixIV(SecretKey sk, byte[] toEncrypt) throws EncryptionError {
         byte[] iv = getRandomNonce(IV_LENGTH_BYTE);
@@ -133,7 +132,7 @@ public class CryptoUtils {
      * @param toDecrypt the ciphertext
      * @param iv Initialization Vector
      * @return the decrypted data
-     * @throws DecryptionError
+     * @throws DecryptionError throws it if an error during decryption occurs
      */
     public static byte[] decryptData(SecretKey sk, byte[] toDecrypt, byte[] iv) throws DecryptionError {
         try {
@@ -150,7 +149,7 @@ public class CryptoUtils {
      * @param sk SecretKey
      * @param toDecrypt ciphertext
      * @return plaintext
-     * @throws DecryptionError
+     * @throws DecryptionError throws it if an error during decryption occurs
      */
     public static byte[] decryptDataWithPrefixIV(SecretKey sk, byte[] toDecrypt) throws DecryptionError {
 

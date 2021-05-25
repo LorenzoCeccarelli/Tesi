@@ -3,12 +3,12 @@ package clientsideEncryption;
 import clientsideEncryption.core.exceptions.ConfigurationFileError;
 
 public class Configuration {
-    private String databaseUrl;
-    private String databaseUsername;
-    private String databasePassword;
-    private String keystorePath;
-    private String keystorePassword;
-    private String masterKeyName;
+    private final String databaseUrl;
+    private final String databaseUsername;
+    private final String databasePassword;
+    private final String keystorePath;
+    private final String keystorePassword;
+    private final String masterKeyName;
 
     public Configuration(String databaseUrl, String databaseUsername, String databasePassword, String keystorePath, String keystorePassword, String masterKeyName){
         this.databaseUrl = databaseUrl;

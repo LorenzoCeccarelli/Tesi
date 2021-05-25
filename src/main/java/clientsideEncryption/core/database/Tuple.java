@@ -3,7 +3,7 @@ package clientsideEncryption.core.database;
 import java.util.HashMap;
 
 public class Tuple {
-    private HashMap<String, String> tuple = new HashMap<>();
+    private final HashMap<String, String> tuple = new HashMap<>();
 
     public Tuple(){}
 

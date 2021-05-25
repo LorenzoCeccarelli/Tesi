@@ -22,7 +22,7 @@ public class KeystoreUtils {
      * Create a KeyStore object (of type PKCS12) protected by a password
      * @param password the password that protects the keystore
      * @return KeystoreInfo
-     * @throws KeystoreOperationError
+     * @throws KeystoreOperationError throws it if an error during the keystore operation occurs
      */
     public static KeyStoreInfo createKeystore(String password) throws KeystoreOperationError {
         try {
@@ -39,7 +39,7 @@ public class KeystoreUtils {
      * Save the KeyStore on the filesystem
      * @param ksi KeyStoreInfo object
      * @param path the filesystem path
-     * @throws KeystoreOperationError
+     * @throws KeystoreOperationError throws it if an error during the keystore operation occurs
      */
     public static void saveKeystore(KeyStoreInfo ksi, String path) throws KeystoreOperationError {
         try {
@@ -58,7 +58,7 @@ public class KeystoreUtils {
      * @param password the password that protects the keystore
      * @param path the filesystem path
      * @return KeystoreInfoObject
-     * @throws KeystoreOperationError
+     * @throws KeystoreOperationError throws it if an error during the keystore operation occurs
      */
     public static KeyStoreInfo loadKeystore(String password, String path) throws KeystoreOperationError, FileNotFoundException {
         try {
@@ -78,7 +78,7 @@ public class KeystoreUtils {
      * @param ksi KeystoreInfo Object
      * @param keyName the key alias
      * @return the symmetric key
-     * @throws KeystoreOperationError
+     * @throws KeystoreOperationError throws it if an error during the keystore operation occurs
      */
     public static SecretKey getKey(KeyStoreInfo ksi, String keyName) throws KeystoreOperationError, KeyDoesNotExistException {
         try {
@@ -92,28 +92,27 @@ public class KeystoreUtils {
 
     /**
      * Check if a key exist in a keystore
-     * @param ksi
-     * @param keyName
-     * @return
-     * @throws UnrecoverableKeyException
-     * @throws KeyStoreException
-     * @throws NoSuchAlgorithmException
+     * @param ksi the KeyStoreInfo object
+     * @param keyName the key name
+     * @return true if the key exists, false otherwise
+     * @throws UnrecoverableKeyException throws it if an error during the opening of keystore occurs
+     * @throws KeyStoreException a generic KeyStore exception
+     * @throws NoSuchAlgorithmException throws it if the algorithm is invalid
      */
     public static boolean existKey(KeyStoreInfo ksi, String keyName) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
         Key k = ksi.getKeystore().getKey(keyName, ksi.getPassword().toCharArray());
-        if(k == null) return false;
-        return true;
+        return k != null;
     }
 
     /**
      * This method checks if a specified keystore exist
-     * @param password
-     * @param path
-     * @return
-     * @throws CertificateException
-     * @throws KeyStoreException
-     * @throws IOException
-     * @throws NoSuchAlgorithmException
+     * @param password the password that protects the keystore
+     * @param path the filesystem path of the keystore
+     * @return true if the keystore exists, false otherwise
+     * @throws CertificateException throws it if an error occurs during the opening of th keystore
+     * @throws KeyStoreException generic keystore error
+     * @throws IOException throws it if an error occurs in the file IO
+     * @throws NoSuchAlgorithmException throws it if the algorithm is invalid
      */
     public static boolean existKeystore(String password, String path) throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
         try {
@@ -134,7 +133,7 @@ public class KeystoreUtils {
      * @param sk the secretKey to add to the keystore
      * @param keyName the key alias
      * @return the updating keystore
-     * @throws KeystoreOperationError
+     * @throws KeystoreOperationError throws it if an error during the keystore operation occurs
      */
     public static KeyStoreInfo insertKey(KeyStoreInfo ksi,SecretKey sk,String keyName) throws KeystoreOperationError {
         try {
@@ -153,7 +152,7 @@ public class KeystoreUtils {
      * Permits to delete a specified key
      * @param ks KeystoreInfo object
      * @param keyName the key alias
-     * @throws KeystoreOperationError
+     * @throws KeystoreOperationError throws it if an error during the keystore operation occurs
      */
     public static void deleteKey(KeyStoreInfo ks, String keyName) throws KeystoreOperationError {
         try {
@@ -166,7 +165,7 @@ public class KeystoreUtils {
     /**
      * Permits to delete a specified keystore
      * @param keystorePath the path of the keystore to delete
-     * @throws KeystoreOperationError
+     * @throws KeystoreOperationError throws it if an error during the keystore operation occurs
      */
     public static void deleteKeystore(String keystorePath) throws KeystoreOperationError {
         try {

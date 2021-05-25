@@ -5,8 +5,8 @@ import java.util.Map;
 
 public class Query {
 
-    private String query;
-    private HashMap<Integer,String> parameters = new HashMap<>();
+    private final String query;
+    private final HashMap<Integer,String> parameters = new HashMap<>();
 
     public Query(String query){
         this.query = query;

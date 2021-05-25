@@ -40,7 +40,7 @@ public class DatabaseManager {
         if(con == null) throw new ConnectionParameterNotValid("The connection is not instantiated");
         setParameters(query);
         String[] tokens = query.getQuery().split(" ");
-        if(!tokens[0].toUpperCase().equals("SELECT")) return null; //TODO("Thorw an exception")
+        if(!tokens[0].equalsIgnoreCase("SELECT")) return null; //TODO("Thorw an exception")
         return ps.executeQuery();
     }
 
@@ -48,7 +48,7 @@ public class DatabaseManager {
         if(con == null) throw new ConnectionParameterNotValid("The connection is not instantiated");
         setParameters(query);
         String[] tokens = query.getQuery().split(" ");
-        if(tokens[0].toUpperCase().equals("SELECT")) return false; //TODO("Thorw an exception")
+        if(tokens[0].equalsIgnoreCase("SELECT")) return false; //TODO("Thorw an exception")
         return ps.execute();
     }
 

@@ -32,14 +32,14 @@ import java.util.logging.Logger;
 
 public class CryptoDatabaseAdapter {
 
-    private Configuration configuration;
+    private final Configuration configuration;
     private DatabaseManager dbManager;
     private KeyStoreInfo ksi;
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
      * The constructor is private. It is possible to create a CryptoDatabaseAdapter using Builder inner static class
-     * @param conf
+     * @param conf the configuration
      */
     private CryptoDatabaseAdapter(Configuration conf){
         this.configuration = conf;
@@ -47,7 +47,7 @@ public class CryptoDatabaseAdapter {
 
     /**
      * This methods initializes the CryptoDatabaseAdapter
-     * @throws InitializationError
+     * @throws InitializationError throws it if an error during the initialization occurs
      */
     public void init() throws InitializationError {
         try {
@@ -92,8 +92,8 @@ public class CryptoDatabaseAdapter {
 
     /**
      * This method permits to create a new query and then use the generated QueryBuilder object for configuring it
-     * @param query
-     * @return
+     * @param query the query
+     * @return the QueryBuilder object
      */
     public QueryBuilder newQueryBuilder(String query){
         return new QueryBuilder(query);
@@ -117,9 +117,9 @@ public class CryptoDatabaseAdapter {
 
         /**
          * This method permits to build a CryptoDatabaseAdapter starting from a configuration file
-         * @param configurationFilePath
-         * @return
-         * @throws ConfigurationFileError
+         * @param configurationFilePath the path of the filesystem where the configuration file is located
+         * @return the new CryptoDatabaseAdapter object
+         * @throws ConfigurationFileError throws it if an error in the configuration exists
          */
         public CryptoDatabaseAdapter buildByFile(String configurationFilePath) throws ConfigurationFileError {
             try {
@@ -145,8 +145,8 @@ public class CryptoDatabaseAdapter {
 
         /**
          * DatabaseUrl setter
-         * @param url
-         * @return
+         * @param url the database url
+         * @return the Builder object
          */
         public Builder setDatabaseUrl(String url){
             this.url = url;
@@ -155,8 +155,8 @@ public class CryptoDatabaseAdapter {
 
         /**
          * DatabaseUsername setter
-         * @param username
-         * @return
+         * @param username the username of the database user
+         * @return the Builder object
          */
         public Builder setDatabaseUsername(String username){
             this.username = username;
@@ -165,8 +165,8 @@ public class CryptoDatabaseAdapter {
 
         /**
          * DatabasePassword setter
-         * @param password
-         * @return
+         * @param password the password of the database user
+         * @return the Builder object
          */
         public Builder setDatabasePassword(String password){
             this.password = password;
@@ -175,8 +175,8 @@ public class CryptoDatabaseAdapter {
 
         /**
          * KeystorePath setter
-         * @param path
-         * @return
+         * @param path the path of the keystore in the filesystem
+         * @return the Builder object
          */
         public Builder setKeystorePath(String path){
             this.path = path;
@@ -185,8 +185,8 @@ public class CryptoDatabaseAdapter {
 
         /**
          * KeystorePassword setter
-         * @param password
-         * @return
+         * @param password the password
+         * @return the Builder object
          */
         public Builder setKeystorePassword(String password){
             this.keystorePassword = password;
@@ -195,8 +195,8 @@ public class CryptoDatabaseAdapter {
 
         /**
          * MasterKeyName setter
-         * @param masterKeyName
-         * @return
+         * @param masterKeyName the name of the masterKey
+         * @return the Builder object
          */
         public Builder setMasterKeyName(String masterKeyName){
             this.masterKeyName = masterKeyName;
@@ -205,8 +205,8 @@ public class CryptoDatabaseAdapter {
 
         /**
          * This method build and return a new CryptoDatabaseAdapter
-         * @return
-         * @throws ConfigurationFileError
+         * @return the new CryptoDatabaseAdapter object
+         * @throws ConfigurationFileError throws it if the configuration file contains errors
          */
         public CryptoDatabaseAdapter build() throws ConfigurationFileError {
             Configuration conf = new Configuration(this.url, this.username, this.password, this.path, this.keystorePassword,this.masterKeyName);
@@ -220,11 +220,11 @@ public class CryptoDatabaseAdapter {
      * method on CryptoDatabaseAdapter object
      */
     public class QueryBuilder{
-        private Query query;
+        private final Query query;
 
         /**
          * Private constructor. Call CryptoDatabaseAdapter.newQueryBuilder for creating a QueryBuilder object
-         * @param query_
+         * @param query_ the Query in string format
          */
         private QueryBuilder(String query_){
             query = new Query(query_);
@@ -232,11 +232,11 @@ public class CryptoDatabaseAdapter {
 
         /**
          * This method permits to set an encrypted paramter to a query
-         * @param position
-         * @param value
-         * @param alg
-         * @return
-         * @throws InvalidQueryException
+         * @param position the field position in the query
+         * @param value the value of the parameter
+         * @param alg the encryption algorithm
+         * @return the QueryBuilder object
+         * @throws InvalidQueryException throws it if the query is invalid
          */
         public QueryBuilder setCipherParameter(int position, String value, CryptoUtils.Algorithm alg) throws InvalidQueryException {
             try {
@@ -255,9 +255,9 @@ public class CryptoDatabaseAdapter {
 
         /**
          * This method permits to set a non encrypted parameter to a query
-         * @param position
-         * @param value
-         * @return
+         * @param position the field position in the query
+         * @param value the value of the parameter
+         * @return the QueryBuilder object
          */
         public QueryBuilder setParameter(int position, String value){
             ClearToken ct = new ClearToken(value);
@@ -267,9 +267,8 @@ public class CryptoDatabaseAdapter {
 
         /**
          * This method permits to run a query that modifies the database
-         * @return
-         * @throws SQLException
-         * @throws ConnectionParameterNotValid
+         * @return false if an error occurs, true otherwise
+         * @throws QueryExecutionError throws it if an error during the query execution occurs
          */
         public boolean run() throws QueryExecutionError {
             try {
@@ -283,8 +282,8 @@ public class CryptoDatabaseAdapter {
 
         /**
          * This method permits to retrieve data from database and return the original data in transparent way to caller
-         * @return
-         * @throws QueryExecutionError
+         * @return the results in Set format
+         * @throws QueryExecutionError throws it if an error during the query execution occurs
          */
         public Set<Tuple> runSelect() throws QueryExecutionError {
             try {
