@@ -1,18 +1,43 @@
 # Tesi - Clientside Encryption Driver
 Sviluppo di un driver per l'abilitazione della cifratura a livello client per il lavoro di tesi riguardo la Database Encryption.
 
+## Indice
+* [Scenario](#scenario)
+ * [Architettura del software](#architettura-del-software)
+    + [Package Core](#package-core)
+      - [Package Database](#package-database)
+        * [DatabaseManager class](#databasemanager-class)
+        * [Query class](#query-class)
+        * [Tuple class](#tuple-class)
+      - [Package Crypto](#package-crypto)
+      - [Package Keystore](#package-keystore)
+        * [KeystoreInfo class](#keystoreinfo-class)
+        * [KeystoreUtils class](#keystoreutils-class)
+      - [Package Token](#package-token)
+        * [Token interface](#token-interface)
+        * [Encrypted Token](#encrypted-token)
+        * [ClearToken](#cleartoken)
+        * [Token Parser](#token-parser)
+      - [Package Logger](#package-logger)
+      - [Package Exception](#package-exception)
+      - [Package Examples](#package-examples)
+      - [Configuration class](#configuration-class)
+    + [CryptoDatabaseAdapter class](#cryptodatabaseadapter-class)
+      - [Builder](#builder)
+      - [QueryBuilder](#querybuilder)
+      - [CryptoDatabaseAdapter](#cryptodatabaseadapter)
 ## Scenario
 
 La **Clientside Encryption**  è una tecnica crittografica che consiste nel cifrare i dati client-side ovvero sul client prima di essere trasmessi ad un server online.
 
-
 ![ClientsideEncryption](./docs/images/ClientSideEnc.png)
+
 ## Architettura del software
 La seguente figura mostra la struttura del Clientside Encryption Package e i suoi possibili utilizzi da parte di una applicazione client.
 
 ![Architettura](./docs/images/Architettura.png)
 
-Il software si comporta come una interfaccia per accedere al database ed è composto da un package denominato Core e da una classe denominata CryptoDatabaseAdapter.
+Il software si comporta come una interfaccia per accedere al database (per ora è supportato solo MySQL) ed è composto da un package denominato Core e da una classe denominata CryptoDatabaseAdapter.
 
 ### Package Core
 Il package ***Core*** rappresenta il nucleo del sistema ed è composto da diversi package per la gestione del database, keystore, crittografia e logging. 
@@ -24,6 +49,7 @@ Il package ***Core*** rappresenta il nucleo del sistema ed è composto da divers
 - Package *Logger*: gestisce il logging su file.
 - Package *Exceptions*: contiene tutte le eccezioni utilizzate.
 - Package *Examples*: contiene tre piccoli programmi che mostrano l'utilizzo del package Core.
+- Classe *Configuration*: modella la configurazione di CryptoDatabaseAdapter.
 
 #### Package Database
 La seguente immagine mostra il diagramma UML del package:
@@ -38,7 +64,7 @@ Si tratta di una classe dove il costruttore richiede tre stringhe ovvero l'url d
 
 ##### Query class
 Modella una query da inviare al database. Il costruttore richiede una stringa che corrisponde ad una query parametrizzata dove il parametro è segnato con un '?' (ad esempio SELECT + FROM TABELLA WHERE id=?). Offre il seguente metodo:
-- setParameter(int,String): permette di settare una stringa come parametro alla posizione specificata.
+- setParameter(int,String): permette di settare una stringa come parametro alla posizione specificata. Al momento sono supportate solo le stringhe come parametro delle query.
 
 ##### Tuple class
 Modella una tupla ritornata dal database. Viene usata per ritornare i risultati di na SELECT al client. Offre i seguenti metodi:
@@ -96,14 +122,59 @@ Si tratta di un classe che implementa l'interfaccia Token e modella i dati cifra
 ##### ClearToken
 Si tratta di una classe che implementa l'interfaccia Token e modella i dati in chiaro nel DB. Ridefinisce il metodo generateToken() che genera il token nel seguente modo: ***Base64UrlEncoded('PLAINTEXT').Base64UrlEncoded(plaintext)*** dove ***plaintext*** corrisponde ai dati in chiaro.
 
+##### Token Parser
+Si tratta di una classe static che permette di estrarre le informazioni contenute nel token esaminando l'header ritornando Token.
+
 #### Package Logger
-Contiene le classi per implementare un sistema di logging basato su file.
+Contiene le classi per implementare un sistema di logging basato su file. Il file di log viene salvata nella cartella ./src/main/resources .
 
 #### Package Exception
 Contiene le eccezioni utilizzate dal sistema per la gestione degli errori riguardo l'IO, Database, Keystore e operazion crittografiche.
 
 #### Package Examples
 Contiene dei programmi di esempio di utilizzo e funzionamento del sistema
+
+#### Configuration class
+La seguente figura mostra il diagramma UML:
+
+![ConfigurationUML](./docs/images/Configuration.png)
+
+Il costruttore riceve sei stringhe come parametri ovvero l'url del database, username e password per il database, il percorso del filesystem dove è presente il keystore, la password che protegge il keystore e il nome della Master Encryption Key.
+
+Il metodo validate() controlla se tutti i campi sono settati e non null.
+
+### CryptoDatabaseAdapter class
+Si tratta di una classe per l'utilizzo trasparente del sistema (senza utilizzare direttamente le classi fornite dal package Core). Una applicazione client può istanziare un oggetto di tipo CryptoDatabaseManager, configurarlo e infine interagire con esso per eseguire query al database.
+
+La seguente figura mostra il diagramma UML:
+
+![CryptoDatabaseAdapter](./docs/images/CryptoDatabaseAdapter.png) 
+
+La classe CryptoDatabaseAdapter possiede due inner class, Builder e QueryBuilder.
+
+#### Builder
+Si tratta di una classe statica che abilita il Builder Pattern, ovvero viene utilizzata per creare e configurare un oggetto di tipo CryptoDatabaseAdapter. Sono possibili due diversi metodi di configurazione:
+- Attraverso un file di configurazione (vedi ./src/main/resources/config.properties) e richiamando il metodo buildByFile(path) dove path è il percorso del filesystem dove è situato il file di configurazione.
+- Richiamando i metodi set*Property* che vanno a configurare un singolo parametro alla volta.
+
+Il metodo build() valida la configurazione e in caso positivo crea e ritorna un oggetto di tipo CryptoDatabaseAdapter.
+
+#### QueryBuilder
+Si tratta di una classe che permette la creazione e configurazione dei parametri di una query. Il costruttore riceve come parametro una stringa in formato parametrico (con '?'). Offre i seguenti metodi:
+- setCipherParameter(int, String, Algorithm): permette di impostare un parametro e cifrarlo con l'algoritmo specificato nei parametri.  
+- setParameter(int, String): permette di impostare un parametro in chiaro nella query.
+- run(): esegue una query che modifica il DB (ad esempio UPDATE).
+- runSelect(): esegue una query di tipo SELECT, estrae ed eventualmente decifra i dati cifrati e li ritorna all'applicazione client in modo trasparente.
+
+#### CryptoDatabaseAdapter
+Si tratta della classe che si intefaccia con l'applicazione client. Il costruttore è privato e richiamabile solo dal Builder. Offre i seguenti metodi:
+- init(): inizializza il sistema (da richiamare sempre).
+- newQueryBuilder(String): permette di costruire un oggetto di tipo QueryBuilder per costruire, configurare ed eseguire una query.
+
+La cartella Examples mostra possibili utilizzi della classe CryptoDatabaseAdapter.
+
+
+
 
 
 
