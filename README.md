@@ -60,6 +60,7 @@ Offre i seguenti metodi:
 - encryptDataWithPrefixIV(SecretKey, byte[]): permette di cifrare i dati ed inserire l'iv in essi.
 - getRandomNonce(int): ritorna un nonce della dimensione specificata.
 
+Per quanto riguarda la Key Management, nel keystore viene salvata la Master Encryption Key che viene utilizzata per cifrare/decifrare la Encryption Key generata on-the-fly ogni volta che c'è un nuovo dato da cifrare ed inserita con esso (in un token) nel database.
 #### Package Keystore
 La seguente immagine mostra il diagramma UML del package:
 
@@ -85,6 +86,24 @@ Offre i seguenti metodi:
 La seguente immagine mostra il diagramma UML del package:
 
 ![TokenUML](./docs/images/Package_token.png)
+
+##### Token interface
+Rappresenta l'astrazione di un token che corrisponde al dato salvato nel database.
+
+##### Encrypted Token
+Si tratta di un classe che implementa l'interfaccia Token e modella i dati cifrati nel DB. Ridefinisce il metodo generateToken() che genera il token nel seguente modo: ***Base64UrlEncoded('CIPHERTEXT').Base64UrlEncoded(ciphertext).Base64UrlEncoded(cipherkey)*** dove ***ciphertext*** sono i dati cifrati con la chiave di cifratura EK generata on-the-fly mentre ***cipherkey*** è la chiave EK cifrata con la Master Encryption Key memorizzata nel keystore. 
+
+##### ClearToken
+Si tratta di una classe che implementa l'interfaccia Token e modella i dati in chiaro nel DB. Ridefinisce il metodo generateToken() che genera il token nel seguente modo: ***Base64UrlEncoded('PLAINTEXT').Base64UrlEncoded(plaintext)*** dove ***plaintext*** corrisponde ai dati in chiaro.
+
+#### Package Logger
+Contiene le classi per implementare un sistema di logging basato su file.
+
+#### Package Exception
+Contiene le eccezioni utilizzate dal sistema per la gestione degli errori riguardo l'IO, Database, Keystore e operazion crittografiche.
+
+#### Package Examples
+Contiene dei programmi di esempio di utilizzo e funzionamento del sistema
 
 
 
