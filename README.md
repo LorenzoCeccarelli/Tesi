@@ -171,6 +171,10 @@ Si tratta della classe che si intefaccia con l'applicazione client. Il costrutto
 - init(): inizializza il sistema (da richiamare sempre).
 - newQueryBuilder(String): permette di costruire un oggetto di tipo QueryBuilder per costruire, configurare ed eseguire una query.
 
+La cartella Examples mostra possibili utilizzi della classe CryptoDatabaseAdapter.
+
+
+
 
 
 
