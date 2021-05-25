@@ -1,12 +1,37 @@
 # Tesi - Clientside Encryption Driver
 Sviluppo di un driver per l'abilitazione della cifratura a livello client per il lavoro di tesi riguardo la Database Encryption.
 
+## Indice
+* [Scenario](#scenario)
+ * [Architettura del software](#architettura-del-software)
+    + [Package Core](#package-core)
+      - [Package Database](#package-database)
+        * [DatabaseManager class](#databasemanager-class)
+        * [Query class](#query-class)
+        * [Tuple class](#tuple-class)
+      - [Package Crypto](#package-crypto)
+      - [Package Keystore](#package-keystore)
+        * [KeystoreInfo class](#keystoreinfo-class)
+        * [KeystoreUtils class](#keystoreutils-class)
+      - [Package Token](#package-token)
+        * [Token interface](#token-interface)
+        * [Encrypted Token](#encrypted-token)
+        * [ClearToken](#cleartoken)
+        * [Token Parser](#token-parser)
+      - [Package Logger](#package-logger)
+      - [Package Exception](#package-exception)
+      - [Package Examples](#package-examples)
+      - [Configuration class](#configuration-class)
+    + [CryptoDatabaseAdapter class](#cryptodatabaseadapter-class)
+      - [Builder](#builder)
+      - [QueryBuilder](#querybuilder)
+      - [CryptoDatabaseAdapter](#cryptodatabaseadapter)
 ## Scenario
 
 La **Clientside Encryption**  è una tecnica crittografica che consiste nel cifrare i dati client-side ovvero sul client prima di essere trasmessi ad un server online.
 
-
 ![ClientsideEncryption](./docs/images/ClientSideEnc.png)
+
 ## Architettura del software
 La seguente figura mostra la struttura del Clientside Encryption Package e i suoi possibili utilizzi da parte di una applicazione client.
 
