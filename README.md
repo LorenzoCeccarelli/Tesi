@@ -63,6 +63,28 @@ Offre i seguenti metodi:
 #### Package Keystore
 La seguente immagine mostra il diagramma UML del package:
 
+![KeystoreUML](./docs/images/Package_keystore.png)
+
+##### KeystoreInfo class
+Si tratta di una classe che modella le informazioni del keystore ovvero il keystore stesso (un file pkcs12) e la password che lo protegge. Il costruttore riceve come parametri un oggetto di tipo Keystore e una stringa che rappresenta la password.
+
+##### KeystoreUtils class
+Si tratta una classe static che offre il supporto alla gestione del keystore. Il tipo di keystore supportato è un file .p12.
+Offre i seguenti metodi:
+- createKeystore(String): permette di creare un oggetto di tipo Keystore e proteggerlo con la password passata come parametro.
+- deleteKeystore(String): permette di eliminare il keystore salvato al path del filesystem specificato.
+- deleteKey(KeystoreInfo, String): permette di eliminare la chiave con il nome specificato dal keystore passato come parametro.
+- existKey(KeystoreInfo, String): permette di verificare se uno specifico keystore contiene una chiave dove il nome è passato come parametro.
+- existKeystore(String, String): permette di verificare se uno specifico keystore esiste nel filesystem.
+- getKey(KeystoreInfo, String): ritorna la chiave specificata dal keystore.
+- insertKey(KeystoreInfo, SecretKey, String): permette di inserire una chiave nel keystore protetto dalla password specificata.
+- loadKeystore(String, String): permette di caricare il keystore in memoria dal filesystem.
+- saveKeystore(KeystoreInfo, String): permette di salvere il keystore nel filesystem.
+
+#### Package Token
+La seguente immagine mostra il diagramma UML del package:
+
+![TokenUML](./docs/images/Package_token.png)
 
 
 
