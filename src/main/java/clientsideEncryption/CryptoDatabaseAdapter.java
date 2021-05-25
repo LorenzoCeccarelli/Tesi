@@ -134,12 +134,6 @@ public class CryptoDatabaseAdapter {
                 String path = props.getProperty("KeystorePath");
                 String keystorePassword = props.getProperty("KeystorePassword");
                 String masterKeyName = props.getProperty("MasterKeyName");
-                //System.out.println("Url is: " + url);
-                //System.out.println("Username is: " + username);
-                //System.out.println("Password is: " + password);
-                //System.out.println("Keystore path is: " + path);
-                //System.out.println("Keystore password is: " + keystorePassword);
-                //System.out.println("Master key name is: "+ masterKeyName);
                 reader.close();
                 Configuration conf = new Configuration(url, username, password, path, keystorePassword,masterKeyName);
                 conf.validate();

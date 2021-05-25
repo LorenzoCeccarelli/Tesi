@@ -16,6 +16,7 @@ public class CreateTableAndQueryItExample {
             CryptoDatabaseAdapter cda = new CryptoDatabaseAdapter.Builder()
                     .buildByFile("src/main/resources/config.properties");
             cda.init();
+            cda.newQueryBuilder("drop table if exists users").run();
             cda.newQueryBuilder("create table users(" +
                                                     "id varchar(255) primary key, " +
                                                     "name varchar(255) not null, " +
