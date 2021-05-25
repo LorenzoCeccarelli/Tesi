@@ -2,7 +2,7 @@ package clientsideEncryption.core.token;
 
 import java.util.Base64;
 
-public class ClearToken extends Token {
+public class ClearToken implements Token {
 
     private String data;
 

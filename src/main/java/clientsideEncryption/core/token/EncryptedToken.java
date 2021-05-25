@@ -3,7 +3,7 @@ package clientsideEncryption.core.token;
 import java.util.Base64;
 
 
-public class EncryptedToken extends Token{
+public class EncryptedToken implements Token{
 
     private byte[] encryptedKey;
     private byte[] ciphertext;
