@@ -302,6 +302,7 @@ public class CryptoDatabaseAdapter {
 
                         //Parse token
                         Token tk = TokenParser.parseToken(token);
+                        if(tk==null) throw new QueryExecutionError("Error during the extraction of the token");
                         //If token is an EncryptedToken
                         if (tk instanceof EncryptedToken) {
                             //Decrypt the key with MEK in order to retrieve the original key
