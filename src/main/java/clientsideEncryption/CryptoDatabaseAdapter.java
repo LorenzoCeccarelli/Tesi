@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CryptoDatabaseAdapter {
@@ -53,6 +54,7 @@ public class CryptoDatabaseAdapter {
         try {
             //Setup the logger
             AdapterLogger.setup();
+            LOGGER.setLevel(Level.OFF);
             LOGGER.info("Init CryptoDatabaseAdapter");
 
             //Create a new database connection
@@ -81,7 +83,7 @@ public class CryptoDatabaseAdapter {
                 KeystoreUtils.insertKey(ksi,masterKey, configuration.getMasterKeyName());
                 KeystoreUtils.saveKeystore(ksi, configuration.getKeystorePath());
                 LOGGER.warning("Key named '"+configuration.getMasterKeyName()+"' creates");
-            } else LOGGER.info("Key named '"+configuration.getMasterKeyName()+"' exists");
+            } //else LOGGER.info("Key named '"+configuration.getMasterKeyName()+"' exists");
 
 
         } catch (SQLException | ConnectionParameterNotValid | CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException | KeystoreOperationError | UnrecoverableKeyException throwables) {

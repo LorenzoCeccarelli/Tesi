@@ -117,10 +117,10 @@ La seguente immagine mostra il diagramma UML del package:
 Rappresenta l'astrazione di un token che corrisponde al dato salvato nel database.
 
 ##### Encrypted Token
-Si tratta di un classe che implementa l'interfaccia Token e modella i dati cifrati nel DB. Ridefinisce il metodo generateToken() che genera il token nel seguente modo: ***Base64UrlEncoded('CIPHERTEXT').Base64UrlEncoded(ciphertext).Base64UrlEncoded(cipherkey)*** dove ***ciphertext*** sono i dati cifrati con la chiave di cifratura EK generata on-the-fly mentre ***cipherkey*** è la chiave EK cifrata con la Master Encryption Key memorizzata nel keystore. 
+Si tratta di un classe che implementa l'interfaccia Token e modella i dati cifrati nel DB. Ridefinisce il metodo generateToken() che genera il token nel seguente modo: ***'CIPHERTEXT'.Base64(ciphertext).Base64(cipherkey)*** dove ***ciphertext*** sono i dati cifrati con la chiave di cifratura EK generata on-the-fly mentre ***cipherkey*** è la chiave EK cifrata con la Master Encryption Key memorizzata nel keystore. 
 
 ##### ClearToken
-Si tratta di una classe che implementa l'interfaccia Token e modella i dati in chiaro nel DB. Ridefinisce il metodo generateToken() che genera il token nel seguente modo: ***Base64UrlEncoded('PLAINTEXT').Base64UrlEncoded(plaintext)*** dove ***plaintext*** corrisponde ai dati in chiaro.
+Si tratta di una classe che implementa l'interfaccia Token e modella i dati in chiaro nel DB. Ridefinisce il metodo generateToken() che genera il token nel seguente modo: ***'PLAINTEXT'.Base64(plaintext)*** dove ***plaintext*** corrisponde ai dati in chiaro.
 
 ##### Token Parser
 Si tratta di una classe static che permette di estrarre le informazioni contenute nel token esaminando l'header ritornando Token.
