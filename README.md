@@ -61,6 +61,8 @@ Si tratta di una classe dove il costruttore richiede tre stringhe ovvero l'url d
 - connect(): permette la connessione al DB con i parametri specificati nel costruttore.
 - runImmutableQuery(Query): esegue una query di tipo SELECT.
 - runMutableQuery(Query): esegue una query non di tipo SELECT ma che modifica il database (ad esempio UPDATE).
+- addBatch(Query): inserisce una query nel batch (per una esecuzione più veloce, utile nelle INSERT e UPDATE).
+- executeBatch(): esegue le query contenute nel batch.
 
 ##### Query class
 Modella una query da inviare al database. Il costruttore richiede una stringa che corrisponde ad una query parametrizzata dove il parametro è segnato con un '?' (ad esempio SELECT + FROM TABELLA WHERE id=?). Offre il seguente metodo:
@@ -165,12 +167,14 @@ Si tratta di una classe che permette la creazione e configurazione dei parametri
 - setParameter(int, String): permette di impostare un parametro in chiaro nella query.
 - run(): esegue una query che modifica il DB (ad esempio UPDATE).
 - runSelect(): esegue una query di tipo SELECT, estrae ed eventualmente decifra i dati cifrati e li ritorna all'applicazione client in modo trasparente.
+- addToBatch(): permette di inserire la query costruita in un batch.
 
 #### CryptoDatabaseAdapter
 Si tratta della classe che si intefaccia con l'applicazione client. Il costruttore è privato e richiamabile solo dal Builder. Offre i seguenti metodi:
 - init(): inizializza il sistema (da richiamare sempre).
 - newQueryBuilder(String): permette di costruire un oggetto di tipo QueryBuilder per costruire, configurare ed eseguire una query.
-
+- executeBatch(): esegue le istruizioni contenute nel batch.
+- 
 La cartella Examples mostra possibili utilizzi della classe CryptoDatabaseAdapter.
 
 
