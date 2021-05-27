@@ -28,15 +28,14 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 public class CryptoDatabaseAdapter {
 
     private final Configuration configuration;
     private DatabaseManager dbManager;
     private KeyStoreInfo ksi;
-    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    //private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
      * The constructor is private. It is possible to create a CryptoDatabaseAdapter using Builder inner static class
@@ -54,40 +53,40 @@ public class CryptoDatabaseAdapter {
         try {
             //Setup the logger
             AdapterLogger.setup();
-            LOGGER.setLevel(Level.OFF);
-            LOGGER.info("Init CryptoDatabaseAdapter");
+            //LOGGER.setLevel(Level.OFF);
+            //LOGGER.info("Init CryptoDatabaseAdapter");
 
             //Create a new database connection
             dbManager = new DatabaseManager(configuration.getDatabaseUrl(), configuration.getDatabaseUsername(), configuration.getDatabasePassword());
             dbManager.connect();
-            LOGGER.info("Connected to: " + configuration.getDatabaseUrl());
+            //LOGGER.info("Connected to: " + configuration.getDatabaseUrl());
 
             //Try to load the keystore
             if(KeystoreUtils.existKeystore(configuration.getKeystorePassword(), configuration.getKeystorePath())) {
-                LOGGER.info("Keystore at '"+configuration.getKeystorePath()+"' exists");
+                //LOGGER.info("Keystore at '"+configuration.getKeystorePath()+"' exists");
                 ksi = KeystoreUtils.loadKeystore(configuration.getKeystorePassword(), configuration.getKeystorePath());
             }
             else{
                 //If the keystore does not exist create it
-                LOGGER.warning("Keystore at '"+configuration.getKeystorePath()+"' does not exist. Creating it...");
+                //LOGGER.warning("Keystore at '"+configuration.getKeystorePath()+"' does not exist. Creating it...");
                 ksi = KeystoreUtils.createKeystore(configuration.getKeystorePassword());
                 KeystoreUtils.saveKeystore(ksi, configuration.getKeystorePath());
-                LOGGER.warning("Keystore at '"+configuration.getKeystorePath()+"' created");
+                //LOGGER.warning("Keystore at '"+configuration.getKeystorePath()+"' created");
             }
 
             //Check if the masterKey (called masterKeyName) exists, if not create it
             if(!KeystoreUtils.existKey(ksi,configuration.getMasterKeyName())){
                 //Create the masterKey
-                LOGGER.warning("Key named '"+configuration.getMasterKeyName()+"' does not exist. Creating it...");
+                //LOGGER.warning("Key named '"+configuration.getMasterKeyName()+"' does not exist. Creating it...");
                 SecretKey masterKey = CryptoUtils.createSymKey(CryptoUtils.Algorithm.AES256);
                 KeystoreUtils.insertKey(ksi,masterKey, configuration.getMasterKeyName());
                 KeystoreUtils.saveKeystore(ksi, configuration.getKeystorePath());
-                LOGGER.warning("Key named '"+configuration.getMasterKeyName()+"' creates");
+                //LOGGER.warning("Key named '"+configuration.getMasterKeyName()+"' creates");
             } //else LOGGER.info("Key named '"+configuration.getMasterKeyName()+"' exists");
 
 
         } catch (SQLException | ConnectionParameterNotValid | CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException | KeystoreOperationError | UnrecoverableKeyException throwables) {
-            LOGGER.severe("Error: "+throwables.getMessage());
+            //LOGGER.severe("Error: "+throwables.getMessage());
             throw new InitializationError(throwables.getMessage());
         }
     }
@@ -99,6 +98,15 @@ public class CryptoDatabaseAdapter {
      */
     public QueryBuilder newQueryBuilder(String query){
         return new QueryBuilder(query);
+    }
+
+    /**
+     * This method executes the batch
+     * @throws SQLException the generic SQL exception
+     * @throws ConnectionParameterNotValid Throws it if the connection parameters are not valid  or if the batch is not instantiated
+     */
+    public void executeBatch() throws SQLException, ConnectionParameterNotValid {
+        dbManager.executeBatch();
     }
 
     /**
@@ -274,10 +282,10 @@ public class CryptoDatabaseAdapter {
          */
         public boolean run() throws QueryExecutionError {
             try {
-                LOGGER.info("Run: "+ query.getQuery());
+                //LOGGER.info("Run: "+ query.getQuery());
                 return dbManager.runMutableQuery(query);
             } catch (SQLException | ConnectionParameterNotValid throwables) {
-                LOGGER.severe("Error: "+ throwables.getMessage());
+                //LOGGER.severe("Error: "+ throwables.getMessage());
                 throw new QueryExecutionError(throwables.getMessage());
             }
         }
@@ -289,7 +297,7 @@ public class CryptoDatabaseAdapter {
          */
         public Set<Tuple> runSelect() throws QueryExecutionError {
             try {
-                LOGGER.info("Run: "+ query.getQuery());
+                //LOGGER.info("Run: "+ query.getQuery());
                 ResultSet rs = dbManager.runImmutableQuery(query);
                 ResultSetMetaData rsmd = rs.getMetaData();
                 SecretKey masterKey = KeystoreUtils.getKey(ksi, configuration.getMasterKeyName());
@@ -327,10 +335,20 @@ public class CryptoDatabaseAdapter {
                 }
                 return result;
             } catch (SQLException | KeystoreOperationError | KeyDoesNotExistException | ConnectionParameterNotValid | DecryptionError throwables) {
-                LOGGER.severe("Error: "+throwables.getMessage());
+                //LOGGER.severe("Error: "+throwables.getMessage());
                 throw new QueryExecutionError(throwables.getMessage());
             }
         }
+
+        /**
+         * This method adds the query to the batch
+         * @throws SQLException a generic SQL exception
+         * @throws ConnectionParameterNotValid Throws it if the connection parameters are not valid
+         */
+        public void addToBatch() throws SQLException, ConnectionParameterNotValid {
+            dbManager.addBatch(query);
+        }
+
 
     }
 }
