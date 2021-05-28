@@ -2,9 +2,9 @@
 Sviluppo di un driver per l'abilitazione della cifratura a livello client per il lavoro di tesi riguardo la Database Encryption.
 
 ## Indice
-* [Scenario](#scenario)
 * [Installazione](#installazione)
- * [Architettura del software](#architettura-del-software)
+* [Scenario](#scenario)
+* [Architettura del software](#architettura-del-software)
     + [Package Core](#package-core)
       - [Package Database](#package-database)
         * [DatabaseManager class](#databasemanager-class)
