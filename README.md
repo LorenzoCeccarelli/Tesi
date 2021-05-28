@@ -38,7 +38,28 @@ Sviluppo di un driver per l'abilitazione della cifratura a livello client per il
         <artifactId>tesi</artifactId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/lorenzoceccarelli/*</url>
+        </repository>
+    </repositories>
     ```
+    - Aprire il file settings.xml
+    ```
+    on Windows: %HOMEPATH%/.m2/settings.xml
+    on Linux / macOS: ~/.m2/settings.xml
+    ``` 
+    - Inserire il seguente frammento di codice nel file settings.xml:
+    ``` 
+    <servers>
+        <server>
+            <id>github</id>
+            <username>LorenzoCeccarelli</username>
+            <password>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</password>
+        </server>
+    </servers>
+    ``` 
     - Eseguire il seguente comando:
     ``` 
     mvn install
