@@ -7,7 +7,7 @@
     <groupId>it.polito.LorenzoCeccarelli</groupId>
     <artifactId>Tesi</artifactId>
     <version>1.0-SNAPSHOT</version>
-
+    <packaging>jar</packaging>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -39,8 +39,18 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
+            <version>5.7.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub lorenzoceccarelli Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/lorenzoceccarelli/Tesi</url>
+        </repository>
+    </distributionManagement>
+
+
 </project>
