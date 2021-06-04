@@ -9,14 +9,16 @@ public class Configuration {
     private final String keystorePath;
     private final String keystorePassword;
     private final String masterKeyName;
+    private final String logfilePath;
 
-    public Configuration(String databaseUrl, String databaseUsername, String databasePassword, String keystorePath, String keystorePassword, String masterKeyName){
+    public Configuration(String databaseUrl, String databaseUsername, String databasePassword, String keystorePath, String keystorePassword, String masterKeyName, String logfilePath){
         this.databaseUrl = databaseUrl;
         this.databaseUsername = databaseUsername;
         this.databasePassword = databasePassword;
         this.keystorePath = keystorePath;
         this.keystorePassword = keystorePassword;
         this.masterKeyName = masterKeyName;
+        this.logfilePath = logfilePath;
     }
 
     public void validate() throws ConfigurationFileError {
@@ -46,5 +48,9 @@ public class Configuration {
 
     public String getMasterKeyName() {
         return masterKeyName;
+    }
+
+    public String getLogfilePath() {
+        return logfilePath;
     }
 }
