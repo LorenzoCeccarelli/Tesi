@@ -1,0 +1,7 @@
+[2021-06-04 15:00:15] [INFORMAZIONI] Init CryptoDatabaseAdapter 
+[2021-06-04 15:00:17] [INFORMAZIONI] Connected to: jdbc:mysql://localhost:6789/tesi 
+[2021-06-04 15:00:17] [INFORMAZIONI] Keystore at './src/main/resources/keystore.p12' exists 
+[2021-06-04 15:00:18] [INFORMAZIONI] Key named 'MEK' exists 
+[2021-06-04 15:00:18] [INFORMAZIONI] Run: drop table if exists users 
+[2021-06-04 15:00:18] [INFORMAZIONI] Run: create table users(id varchar(255) primary key, name varchar(255) not null, creditCardNumber varchar(255) not null) 
+[2021-06-04 15:00:18] [INFORMAZIONI] Run: select * from users 

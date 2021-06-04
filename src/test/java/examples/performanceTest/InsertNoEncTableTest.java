@@ -1,8 +1,11 @@
+package examples.performanceTest;
+
 import clientsideEncryption.CryptoDatabaseAdapter;
 import clientsideEncryption.core.crypto.CryptoUtils;
 import clientsideEncryption.core.exceptions.ConfigurationFileError;
 import clientsideEncryption.core.exceptions.InitializationError;
 import clientsideEncryption.core.exceptions.InvalidQueryException;
+import clientsideEncryption.core.exceptions.QueryExecutionError;
 import com.sun.management.OperatingSystemMXBean;
 
 import javax.management.MBeanServerConnection;
@@ -12,8 +15,8 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
-public class UpdateTest {
-    public static void main(String[] args) throws ConfigurationFileError {
+public class InsertNoEncTableTest {
+    public static void main(String[] args){
         try {
             CryptoDatabaseAdapter cda = new CryptoDatabaseAdapter.Builder().buildByFile("src/main/resources/config.properties");
             cda.init();
@@ -24,30 +27,41 @@ public class UpdateTest {
             String rowsNumber = reader.readLine();
             System.out.println(tableName);
             System.out.println(Integer.parseInt(rowsNumber));
-            MBeanServerConnection mbsc = ManagementFactory.getPlatformMBeanServer();
+            cda.newQueryBuilder("drop table if exists " + tableName).run();
+            cda.newQueryBuilder("create table "+tableName+ "(" +
+                    "id varchar(255) primary key, " +
+                    "nome varchar(255) not null, " +
+                    "cognome varchar(255) not null, " +
+                    "numeroCartaCredito varchar(255) not null, " +
+                    "citta varchar(255) not null)")
+                    .run();
 
+            MBeanServerConnection mbsc = ManagementFactory.getPlatformMBeanServer();
             OperatingSystemMXBean osMBean = ManagementFactory.newPlatformMXBeanProxy(
                     mbsc, ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME, OperatingSystemMXBean.class);
 
             long nanoBefore = System.nanoTime();
             long cpuBefore = osMBean.getProcessCpuTime();
 
-            for (int i = 0; i<Integer.parseInt(rowsNumber);i++){
-                cda.newQueryBuilder("UPDATE "+ tableName
-                                    + " SET creditCardNumber = ?")
-                        .setCipherParameter(1,"5699969", CryptoUtils.Algorithm.AES192)
+            for (int i = 0; i<Integer.parseInt(rowsNumber); i++){
+
+                cda.newQueryBuilder("insert into "+tableName+"(id,nome,cognome,numeroCartaCredito,citta)" +
+                        "values(?,?,?,?,?)")
+                        .setParameter(1,String.valueOf(i))
+                        .setParameter(2,"Josh")
+                        .setParameter(3,"Campbell")
+                        .setParameter(4,"54589720575")
+                        .setParameter(5, "New York")
                         .addToBatch();
             }
-
             cda.executeBatch();
-
             long nanoAfter = System.nanoTime();
             long cpuAfter = osMBean.getProcessCpuTime();
             System.out.println("Elapsed Time(ms): " + (nanoAfter-nanoBefore)/(1000000));
             System.out.println("CPU Time: " + (cpuAfter-cpuBefore)/1000000);
 
-        } catch (InitializationError | IOException | InvalidQueryException | SQLException initializationError) {
-            initializationError.printStackTrace();
+        } catch (ConfigurationFileError | QueryExecutionError | InitializationError | IOException | SQLException configurationFileError) {
+            configurationFileError.printStackTrace();
         }
     }
 }

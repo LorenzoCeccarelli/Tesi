@@ -1,4 +1,4 @@
-package clientsideEncryption.examples;
+package examples.transparentUsage;
 
 import clientsideEncryption.CryptoDatabaseAdapter;
 import clientsideEncryption.core.crypto.CryptoUtils;

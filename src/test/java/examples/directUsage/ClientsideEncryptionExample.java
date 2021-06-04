@@ -1,4 +1,4 @@
-package clientsideEncryption.core.examples;
+package examples.directUsage;
 
 import clientsideEncryption.core.crypto.CryptoUtils;
 import clientsideEncryption.core.database.DatabaseManager;

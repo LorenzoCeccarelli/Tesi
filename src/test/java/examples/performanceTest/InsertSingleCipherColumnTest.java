@@ -1,3 +1,5 @@
+package examples.performanceTest;
+
 import clientsideEncryption.CryptoDatabaseAdapter;
 import clientsideEncryption.core.crypto.CryptoUtils;
 import clientsideEncryption.core.exceptions.ConfigurationFileError;
@@ -13,7 +15,7 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
-public class InsertTest {
+public class InsertSingleCipherColumnTest {
     public static void main(String[] args){
         try {
             CryptoDatabaseAdapter cda = new CryptoDatabaseAdapter.Builder().buildByFile("src/main/resources/config.properties");
@@ -28,25 +30,28 @@ public class InsertTest {
             cda.newQueryBuilder("drop table if exists " + tableName).run();
             cda.newQueryBuilder("create table "+tableName+ "(" +
                     "id varchar(255) primary key, " +
-                    "name varchar(255) not null, " +
-                    "creditCardNumber varchar(255) not null)")
+                    "nome varchar(255) not null, " +
+                    "cognome varchar(255) not null, " +
+                    "numeroCartaCredito varchar(255) not null, " +
+                    "citta varchar(255) not null)")
                     .run();
 
             MBeanServerConnection mbsc = ManagementFactory.getPlatformMBeanServer();
-
             OperatingSystemMXBean osMBean = ManagementFactory.newPlatformMXBeanProxy(
                     mbsc, ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME, OperatingSystemMXBean.class);
 
             long nanoBefore = System.nanoTime();
             long cpuBefore = osMBean.getProcessCpuTime();
 
-            //long startTime= System.currentTimeMillis();
             for (int i = 0; i<Integer.parseInt(rowsNumber); i++){
-                cda.newQueryBuilder("insert into "+tableName+"(id,name,creditCardNumber)" +
-                        "values(?,?,?)")
+
+                cda.newQueryBuilder("insert into "+tableName+"(id,nome,cognome,numeroCartaCredito,citta)" +
+                        "values(?,?,?,?,?)")
                         .setParameter(1,String.valueOf(i))
                         .setParameter(2,"Josh")
-                        .setCipherParameter(3,"54589720575", CryptoUtils.Algorithm.AES192)
+                        .setParameter(3,"Campbell")
+                        .setCipherParameter(4,"54589720575", CryptoUtils.Algorithm.AES256)
+                        .setParameter(5, "New York")
                         .addToBatch();
             }
             cda.executeBatch();
@@ -55,7 +60,7 @@ public class InsertTest {
             System.out.println("Elapsed Time(ms): " + (nanoAfter-nanoBefore)/(1000000));
             System.out.println("CPU Time: " + (cpuAfter-cpuBefore)/1000000);
 
-        } catch (ConfigurationFileError | QueryExecutionError | InvalidQueryException | InitializationError | IOException | SQLException configurationFileError) {
+        } catch (ConfigurationFileError | QueryExecutionError | InitializationError | IOException | SQLException | InvalidQueryException configurationFileError) {
             configurationFileError.printStackTrace();
         }
 

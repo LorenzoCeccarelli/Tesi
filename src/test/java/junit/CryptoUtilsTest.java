@@ -1,3 +1,5 @@
+package junit;
+
 import clientsideEncryption.core.crypto.CryptoUtils;
 import clientsideEncryption.core.exceptions.DecryptionError;
 import clientsideEncryption.core.exceptions.EncryptionError;
