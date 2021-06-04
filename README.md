@@ -29,20 +29,8 @@ Sviluppo di un driver per l'abilitazione della cifratura a livello client per il
       - [CryptoDatabaseAdapter](#cryptodatabaseadapter)
 
 ## Installazione
+- Clonare questo repository ed importare /artifacts/tesi-*.jar nel progetto
 
-Usando Maven:
-- Aggiungere il seguente frammento di codice nel file pom.xl:
-``` 
-<dependency>
-  <groupId>it.polito.lorenzoceccarelli</groupId>
-  <artifactId>tesi</artifactId>
-  <version>1.0-SNAPSHOT</version>
-</dependency>
-```
-- Eseguire il seguente comando:
-``` 
-mvn install
-``` 
 ## Scenario
 
 La **Clientside Encryption**  è una tecnica crittografica che consiste nel cifrare i dati client-side ovvero sul client prima di essere trasmessi ad un server online.
