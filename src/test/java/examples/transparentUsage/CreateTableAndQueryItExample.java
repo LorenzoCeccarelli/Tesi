@@ -41,7 +41,7 @@ public class CreateTableAndQueryItExample {
             cda.newQueryBuilder("insert into users(id,name,creditCardNumber)" +
                                 "values(?,?,?)")
                     .setParameter(1,"1")
-                    .setParameter(2,"Josh")
+                    .setParameter(2,"Joseph")
                     .setCipherParameter(3,"54589720575", CryptoUtils.Algorithm.AES192)
                     .addToBatch();
             cda.newQueryBuilder("insert into users(id,name,creditCardNumber)" +
