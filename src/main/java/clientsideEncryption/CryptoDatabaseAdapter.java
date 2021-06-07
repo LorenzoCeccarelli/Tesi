@@ -92,8 +92,8 @@ public class CryptoDatabaseAdapter {
 
 
         } catch (SQLException | ConnectionParameterNotValid | CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException | KeystoreOperationError | UnrecoverableKeyException throwables) {
-            LOGGER.severe("Error: "+throwables.getMessage());
-            throw new InitializationError(throwables.getMessage());
+            LOGGER.severe("Error: "+ Arrays.toString(throwables.getStackTrace()));
+            throw new InitializationError(throwables.getClass()+ ": "+throwables.getMessage());
         }
     }
 
@@ -158,7 +158,7 @@ public class CryptoDatabaseAdapter {
                 conf.validate();
                 return new CryptoDatabaseAdapter(conf);
             } catch (IOException e) {
-                throw new ConfigurationFileError(e.getMessage());
+                throw new ConfigurationFileError(e.getClass() + ": "+e.getMessage());
             }
         }
 
@@ -277,7 +277,7 @@ public class CryptoDatabaseAdapter {
                 return this;
 
             } catch (NoSuchAlgorithmException | EncryptionError | KeystoreOperationError | KeyDoesNotExistException e) {
-                throw new InvalidQueryException(e.getMessage());
+                throw new InvalidQueryException(e.getClass()+ ": "+e.getMessage());
             }
         }
 
@@ -305,7 +305,7 @@ public class CryptoDatabaseAdapter {
                 return dbManager.runMutableQuery(query);
             } catch (SQLException | ConnectionParameterNotValid throwables) {
                 LOGGER.severe("Error: "+ Arrays.toString(throwables.getStackTrace()));
-                throw new QueryExecutionError(throwables.getMessage());
+                throw new QueryExecutionError(throwables.getClass()+ ": "+throwables.getMessage());
             }
         }
 
@@ -356,7 +356,7 @@ public class CryptoDatabaseAdapter {
                 return result;
             } catch (SQLException | KeystoreOperationError | KeyDoesNotExistException | ConnectionParameterNotValid | DecryptionError throwables) {
                 LOGGER.severe("Error: "+ Arrays.toString(throwables.getStackTrace()));
-                throw new QueryExecutionError(throwables.getMessage());
+                throw new QueryExecutionError(throwables.getClass()+": "+throwables.getMessage());
             }
         }
 

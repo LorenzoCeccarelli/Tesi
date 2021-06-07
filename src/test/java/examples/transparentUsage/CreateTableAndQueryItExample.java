@@ -7,11 +7,6 @@ import clientsideEncryption.core.exceptions.ConfigurationFileError;
 import clientsideEncryption.core.exceptions.InitializationError;
 import clientsideEncryption.core.exceptions.InvalidQueryException;
 import clientsideEncryption.core.exceptions.QueryExecutionError;
-import com.sun.management.OperatingSystemMXBean;
-
-import javax.management.MBeanServerConnection;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 import java.util.Set;
 
@@ -22,15 +17,6 @@ public class CreateTableAndQueryItExample {
                     .buildByFile("src/main/resources/config.properties");
             cda.init();
 
-            MBeanServerConnection mbsc = ManagementFactory.getPlatformMBeanServer();
-
-            OperatingSystemMXBean osMBean = ManagementFactory.newPlatformMXBeanProxy(
-                    mbsc, ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME, OperatingSystemMXBean.class);
-
-            long nanoBefore = System.nanoTime();
-            long cpuBefore = osMBean.getProcessCpuTime();
-            System.out.println(nanoBefore/1000000);
-            System.out.println(cpuBefore/1000000);
             cda.newQueryBuilder("drop table if exists users").run();
             cda.newQueryBuilder("create table users(" +
                                                     "id varchar(255) primary key, " +
@@ -58,13 +44,9 @@ public class CreateTableAndQueryItExample {
                     .addToBatch();
             cda.executeBatch();
 
-            long nanoAfter = System.nanoTime();
-            long cpuAfter = osMBean.getProcessCpuTime();
-            System.out.println("Elapsed Time(ms): " + (nanoAfter-nanoBefore)/(1000000));
-            System.out.println("CPU Time: " + (cpuAfter-cpuBefore)/1000000);
             Set<Tuple> result = cda.newQueryBuilder("select * from users").runSelect();
             result.forEach(System.out::println);
-        } catch (ConfigurationFileError | QueryExecutionError | InitializationError | InvalidQueryException | IOException | SQLException configurationFileError) {
+        } catch (ConfigurationFileError | QueryExecutionError | InitializationError | InvalidQueryException | SQLException configurationFileError) {
             configurationFileError.printStackTrace();
         }
     }

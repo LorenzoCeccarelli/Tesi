@@ -106,7 +106,7 @@ public class CryptoUtils {
             c.init(Cipher.ENCRYPT_MODE, sk, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
             return c.doFinal(toEncrypt);
         } catch (InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException | BadPaddingException | InvalidKeyException e) {
-            throw new EncryptionError(e.getMessage());
+            throw new EncryptionError(e.getClass() + ": "+e.getMessage());
         }
     }
 
@@ -140,7 +140,7 @@ public class CryptoUtils {
             c.init(Cipher.DECRYPT_MODE, sk, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
             return c.doFinal(toDecrypt);
         } catch (InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException | BadPaddingException | InvalidKeyException e) {
-            throw new DecryptionError(e.getMessage());
+            throw new DecryptionError(e.getClass()+": "+e.getMessage());
         }
     }
 

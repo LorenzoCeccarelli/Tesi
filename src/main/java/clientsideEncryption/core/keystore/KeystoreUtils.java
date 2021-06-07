@@ -31,7 +31,7 @@ public class KeystoreUtils {
             ks.load(null, pwdArray);
             return new KeyStoreInfo(ks, password);
         } catch (CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException e) {
-            throw new KeystoreOperationError(e.getMessage());
+            throw new KeystoreOperationError(e.getClass() + ": " + e.getMessage());
         }
     }
 
@@ -49,7 +49,7 @@ public class KeystoreUtils {
             ksi.getKeystore().store(fos, pwdArray);
             fos.close();
         } catch (CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException e) {
-            throw new KeystoreOperationError(e.getMessage());
+            throw new KeystoreOperationError(e.getClass() + ": "+e.getMessage());
         }
     }
 
@@ -69,7 +69,7 @@ public class KeystoreUtils {
         } catch(FileNotFoundException ex){
             throw ex;
         } catch (CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException e) {
-            throw new KeystoreOperationError(e.getMessage());
+            throw new KeystoreOperationError(e.getClass() + ": "+e.getMessage());
         }
     }
 
@@ -86,7 +86,7 @@ public class KeystoreUtils {
             if(k == null) throw new KeyDoesNotExistException("Key called '"+keyName+"' does not exist in keystore ");
             return new SecretKeySpec(k.getEncoded(), 0, k.getEncoded().length, "AES");
         }  catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException  e) {
-            throw new KeystoreOperationError(e.getMessage());
+            throw new KeystoreOperationError(e.getClass() + ": "+e.getMessage());
         }
     }
 
@@ -123,8 +123,6 @@ public class KeystoreUtils {
             return true;
         } catch (FileNotFoundException e) {
             return false;
-        } catch (CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException e) {
-            throw e;
         }
     }
     /**
