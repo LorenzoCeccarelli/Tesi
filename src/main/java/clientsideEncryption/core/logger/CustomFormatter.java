@@ -11,7 +11,7 @@ public class CustomFormatter extends Formatter {
     public String format(LogRecord record) {
         return String.format(format,
                 new Date(record.getMillis()),
-                record.getLevel().getLocalizedName(),
+                record.getLevel(),
                 record.getMessage());
     }
 }
